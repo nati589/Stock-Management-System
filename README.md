@@ -1,7 +1,5 @@
-# Tauri + React
+# Stock Management System
 
-This template should help get you started developing with Tauri and React in Vite.
+A stock management desktop application built with a React frontend and a Firebase backend. 
 
-## Recommended IDE Setup
 
-- [VS Code](https://code.visualstudio.com/) + [Tauri](https://marketplace.visualstudio.com/items?itemName=tauri-apps.tauri-vscode) + [rust-analyzer](https://marketplace.visualstudio.com/items?itemName=rust-lang.rust-analyzer)
