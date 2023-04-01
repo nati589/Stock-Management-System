@@ -18,7 +18,6 @@ import { Grid } from "@mui/material";
 import MUIDataTable from "mui-datatables";
 import { db } from "../config/firebase";
 import { getDocs, collection, updateDoc, doc } from "firebase/firestore";
-// import CreditorCard from "../components/CreditorCard";
 
 function Credit() {
   const [open, setOpen] = useState(false);

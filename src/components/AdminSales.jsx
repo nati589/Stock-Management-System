@@ -1,92 +1,209 @@
-import { Box } from "@mui/material";
+import { Box, FormControl, InputLabel, MenuItem, Select } from "@mui/material";
 import { Card } from "@mui/material";
 import { CardContent } from "@mui/material";
 import { Divider } from "@mui/material";
 import { Grid, Typography } from "@mui/material";
 import { styled } from "@mui/system";
 import MUIDataTable from "mui-datatables";
-import React, { useState } from "react";
+import { useEffect, useState } from "react";
+import { db } from "../config/firebase";
+import { getDocs, collection } from "firebase/firestore";
 
 const StyledMUIDataTable = styled(MUIDataTable)(({ theme }) => ({
   background: theme.palette.background.default,
 }));
-const columns = ["Name", "Quantity", "Unit", "Price", "Salesperson", "Date", "Total"];
-
-const data = [
-  ["James Houston", "2", "Pc", "30", 'Solomon', "2020-01-01", '52'],
-  ["John Doe", "1", "Pc", "80", 'Solomon', "2020-01-01", '70'],
-  ["James Houston", "1", "Pc", "100", 'Solomon', "2020-01-01", '150'],  
-  ["James Houston", "2", "Pc", "30", 'Solomon', "2020-01-01", '52'],
-  ["John Doe", "1", "Pc", "80", 'Solomon', "2020-01-01", '70'],
-  ["James Houston", "1", "Pc", "100", 'Solomon', "2020-01-01", '150'],
-  ["James Houston", "2", "Pc", "30", 'Solomon', "2020-01-01", '52'],
-  ["John Doe", "1", "Pc", "80", 'Solomon', "2020-01-01", '70'],
-  ["James Houston", "1", "Pc", "100", 'Solomon', "2020-01-01", '150'],
-  ["James Houston", "2", "Pc", "30", 'Solomon', "2020-01-01", '52'],
-  ["John Doe", "1", "Pc", "80", 'Solomon', "2020-01-01", '70'],
-  ["James Houston", "1", "Pc", "100", 'Solomon', "2020-01-01", '150'],
-];
+const columns = ["Salesperson", "Products", "Date", "Total"];
 
 const options = {
   filterType: "checkbox",
+  selectableRows: "none",
+  responsive: "standard",
+  elevation: 0,
 };
 
 function AdminSales() {
+  const salesRef = collection(db, "sales");
+  const [salesList, setSalesList] = useState([]);
+  const [tableData, setTableData] = useState([]);
+  const [filter, setFilter] = useState("Today");
+
+  const handleSubTotalSum = (data) => {
+    let sum = 0;
+    for (let val = 0; val < data.length; val++) {
+      sum += data[val][3];
+    }
+    return sum;
+  };
+
+  const getDetails = async () => {
+    try {
+      const salesData = await getDocs(salesRef);
+      const filteredSales = salesData.docs.map((doc) => ({
+        ...doc.data(),
+        id: doc.id,
+      }));
+      setSalesList(
+        filteredSales.filter(
+          (sale) =>
+            sale.credit === false || sale?.creditinfo?.payment_covered === true
+        )
+      );
+      setTableData(
+        filteredSales
+          .filter(
+            (sale) =>
+              sale.credit === false ||
+              sale?.creditinfo?.payment_covered === true
+          )
+          .map((sale) => {
+            return [sale.seller, sale.items.length, sale.date_sold, sale.total];
+          })
+          .filter((sale) => {
+            let now = new Date();
+            let [month, day, year] = sale[2].split("/");
+            return (
+              now.getFullYear() == year &&
+              now.getMonth() + 1 == month &&
+              now.getDate() == day
+            );
+          })
+      );
+    } catch (error) {
+      console.error(error);
+    }
+  };
+  const handleSort = (event) => {
+    setTableData(
+      salesList
+        .map((sale) => {
+          return [sale.seller, sale.items.length, sale.date_sold, sale.total];
+        })
+        .filter((sale) => {
+          let now = new Date();
+          let [month, day, year] = sale[2].split("/");
+          console.log(now.getFullYear() == year);
+          if (event.target.value === "Today") {
+            return (
+              now.getFullYear() == year &&
+              now.getMonth() + 1 == month &&
+              now.getDate() == day
+            );
+          } else if (event.target.value === "This Month") {
+            return now.getFullYear() == year && now.getMonth() + 1 == month;
+          } else if (event.target.value === "This Year") {
+            return now.getFullYear() == year;
+          } else {
+            return true;
+          }
+        })
+    );
+  };
+  useEffect(() => {
+    getDetails();
+  }, []);
   return (
-    <Grid container spacing={1} sx={{ pl: 1, pr: 1 }}>
-      <Grid
-        item
-        xs={8}
-        md={8}
+    <>
+      <Box
         sx={{
-          //  maxHeight: "80vh",
-          //  overflowY: "scroll",
-          pr: 1,
+          display: "flex",
+          justifyContent: "space-between",
+          ml: 1,
+          mr: 1,
+          mb: 2,
         }}>
-        {/* <Typography variant="h4" sx={{ mb: 2}}>
-            Sales
-        </Typography> */}
-        <StyledMUIDataTable
-          title={"Sales"}
-          data={data}
-          columns={columns}
-          options={options}
-        />
-        {/* <Products cardData={cardData} addToCart={addToCart} /> */}
+        <Typography variant="h4">Sales Report</Typography>
+        <FormControl sx={{ minWidth: 250 }}>
+          <InputLabel id="categories">Filter</InputLabel>
+          <Select
+            labelId="categories"
+            id="categoryid"
+            value={filter}
+            label="Categories"
+            onChange={(event) => {
+              setFilter(event.target.value);
+              handleSort(event);
+            }}>
+            {["Today", "This Month", "This Year", "All"].map((item, index) => (
+              <MenuItem value={item} key={index}>
+                {item}
+              </MenuItem>
+            ))}
+          </Select>
+        </FormControl>
+      </Box>
+      <Grid container spacing={1} sx={{ pl: 1, pr: 1 }}>
+        <Grid
+          item
+          xs={8}
+          md={8}
+          sx={{
+            pr: 1,
+          }}>
+          <StyledMUIDataTable
+            title={"Sales"}
+            data={tableData}
+            columns={columns}
+            options={options}
+          />
+        </Grid>
+        <Grid item xs={4} md={4} sx={{ maxHeight: "80vh" }}>
+          <Card>
+            <Typography variant="h6" sx={{ ml: 2, mb: 2 }}>
+              Sales Summary
+            </Typography>
+            <Divider />
+            <CardContent sx={{ pl: 3, pr: 3 }}>
+              <Box
+                sx={{
+                  display: "flex",
+                  justifyContent: "space-between",
+                  mb: 1,
+                }}></Box>
+              <Box
+                sx={{
+                  display: "flex",
+                  justifyContent: "space-between",
+                  mb: 1,
+                }}>
+                <Typography>Sub-total</Typography>
+                <Typography>
+                  {handleSubTotalSum(tableData).toFixed(2)}
+                </Typography>
+              </Box>
+              <Box
+                sx={{
+                  display: "flex",
+                  justifyContent: "space-between",
+                  mb: 1,
+                }}>
+                <Typography>TXBL</Typography>
+                <Typography>
+                  {handleSubTotalSum(tableData).toFixed(2)}
+                </Typography>
+              </Box>
+              <Box
+                sx={{
+                  display: "flex",
+                  justifyContent: "space-between",
+                  mb: 1,
+                }}>
+                <Typography>TAX</Typography>
+                <Typography>
+                  {(handleSubTotalSum(tableData) * 0.15).toFixed(2)}
+                </Typography>
+              </Box>
+              <Divider sx={{ mb: 2 }} />
+              <Box sx={{ display: "flex", justifyContent: "space-between" }}>
+                <Typography color="primary">Total</Typography>
+                <Typography color="primary">
+                  {(handleSubTotalSum(tableData) * 1.15).toFixed(2)}
+                </Typography>
+              </Box>
+            </CardContent>
+          </Card>
+        </Grid>
       </Grid>
-      <Grid item xs={4} md={4} sx={{ maxHeight: "80vh" }}>
-        {/* <Paper>xs=6 md=4</Paper> */}
-        <Card>
-          <Typography variant="h6" sx={{ ml: 2, mb: 2 }}>
-            Sales Summary
-          </Typography>
-          <Divider />
-          <CardContent sx={{ pl: 3, pr: 3}}>
-            <Box sx={{display: 'flex', justifyContent: 'space-between', mb: 1}}>
-              <Typography>Quantity</Typography>
-              <Typography>5</Typography>
-            </Box>
-            <Box sx={{display: 'flex', justifyContent: 'space-between', mb: 1}}>
-              <Typography>Sub-total</Typography>
-              <Typography>345</Typography>
-            </Box>
-            <Box sx={{display: 'flex', justifyContent: 'space-between', mb: 1}}>
-              <Typography>TXBL</Typography>
-              <Typography>345</Typography>
-            </Box>
-            <Box sx={{display: 'flex', justifyContent: 'space-between', mb: 1}}>
-              <Typography>TAX</Typography>
-              <Typography>{345 * 0.15}</Typography>
-            </Box>
-            <Divider sx={{mb: 2}}/>
-            <Box sx={{display: 'flex', justifyContent: 'space-between'}}>
-              <Typography color='primary'>Total</Typography>
-              <Typography color='primary'>{(345 * 1.15).toFixed(2)}</Typography>
-            </Box>
-          </CardContent>
-        </Card>
-      </Grid>
-    </Grid>
+    </>
   );
 }
 
