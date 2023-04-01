@@ -2,21 +2,20 @@ import styled from "@emotion/styled";
 import {
   Box,
   Button,
-  Card,
-  CardActions,
-  CardContent,
   Modal,
   Paper,
   Table,
   TableCell,
   TableContainer,
+  TableHead,
+  TableBody,
   TableRow,
   TextField,
   Typography,
 } from "@mui/material";
 import { useState, useEffect } from "react";
 import { Grid } from "@mui/material";
-import MUIDataTable, { TableBody, TableHead } from "mui-datatables";
+import MUIDataTable from "mui-datatables";
 import { db } from "../config/firebase";
 import { getDocs, collection, updateDoc, doc } from "firebase/firestore";
 // import CreditorCard from "../components/CreditorCard";
@@ -24,14 +23,55 @@ import { getDocs, collection, updateDoc, doc } from "firebase/firestore";
 function Credit() {
   const [open, setOpen] = useState(false);
   const [paid, setPaid] = useState(0);
+  const [covered, setCovered] = useState(false);
+  const [modalData, setModalData] = useState();
+  const [credit, setCredit] = useState([]);
   const [creditList, setCreditList] = useState([]);
   const [productList, setProductList] = useState([]);
+  const creditRef = collection(db, "sales");
+
   // console.log(creditList)
-  const handleClose = (event, reason) => {
+  const handleClose = async (data, unpaid, reason) => {
     if (reason === "backdropClick") {
       console.log(reason);
     } else {
-      setOpen(!open);
+      if (covered) {
+        try {
+          const creditDoc = doc(db, "sales", data.id);
+          await updateDoc(creditDoc, {
+            creditinfo: {
+              payment_covered: true,
+              unpaid: 0,
+              name: data.creditorName,
+              duedate: data.dueDate,
+            },
+          });
+          // .then(() => setOpenSnackbar(true));
+          getDetails();
+        } catch (error) {
+          console.error(error);
+        }
+      } else {
+        try {
+          const creditDoc = doc(db, "sales", data.id);
+          await updateDoc(creditDoc, {
+            creditinfo: {
+              payment_covered: false,
+              unpaid: unpaid,
+              name: data.creditorName,
+              duedate: data.dueDate,
+            },
+          });
+          // .then(() => setOpenSnackbar(true));
+          getDetails();
+        } catch (error) {
+          console.error(error);
+        }
+      }
+      setCovered(false)
+      setPaid(0)
+      setModalData()
+      setOpen(false);
     }
   };
   const handleBackdropClick = (event) => {
@@ -60,7 +100,7 @@ function Credit() {
     "Unpaid",
     "Due Date",
     "ID",
-    "Payment Covered",
+    "Status",
     // {
     //   label: "Products",
     //   options: {
@@ -81,9 +121,23 @@ function Credit() {
       options: {
         filter: false,
         sort: false,
-        customBodyRender: (value, tableMeta, updateValue) => {
+        customBodyRender: (value, rowData, tableMeta, updateValue) => {
+          let data = rowData.rowData;
           return (
-            <Button variant="outlined" onClick={handleClose}>
+            <Button
+              variant="outlined"
+              onClick={() => {
+                setModalData({
+                  id: data[4],
+                  creditorName: data[0],
+                  amount: data[1],
+                  dueDate: data[3],
+                  unpaid: data[2],
+                  paymentcovered: false,
+                });
+                setOpen(true);
+              }}
+              disabled={value === "Paid"}>
               Update
             </Button>
           );
@@ -92,76 +146,58 @@ function Credit() {
       name: "update",
     },
   ];
-
-  // const creditData = [
-  //   ["John Doe", "150", "45", "2023/2/1", "3"],
-  //   ["John Doe", "150", "45", "2023/2/1", "3"],
-  //   ["John Doe", "150", "45", "2023/2/1", "3"],
-  //   ["John Doe", "150", "45", "2023/2/1", "3"],
-  //   ["John Doe", "150", "45", "2023/2/1", "3"],
-  //   ["John Doe", "150", "45", "2023/2/1", "3"],
-  //   ["John Doe", "150", "45", "2023/2/1", "3"],
-  //   ["John Doe", "150", "45", "2023/2/1", "3"],
-  // ];
   const options = {
-    filterType: "checkbox",
+    filterType: "dropdown",
+    selectableRows: "none",
+    responsive: "standard",
+    elevation: 0,
     expandableRows: true,
     expandableRowsHeader: false,
+    expandableRowsOnClick: true,
     renderExpandableRow: (rowData, rowMeta) => {
-      // const
-      console.log(rowData);
+      const colSpan = rowData.length + 1;
+      const data = credit.find((credit) => credit.id === rowData[4]).items;
       return (
-        <tr>
-          <td>
-            <div>hi</div>
-          </td>
-        </tr>
-        //     <TableContainer component={Paper}>
-        //   <Table sx={{ minWidth: 650 }} size="small" aria-label="a dense table">
-        //     <TableHead>
-        //       <TableRow>
-        //         <TableCell>Item</TableCell>
-        //         <TableCell align="right">Quantity</TableCell>
-        //         <TableCell align="right">Price</TableCell>
-        //       </TableRow>
-        //     </TableHead>
-        //     <TableBody>
-        //       {rowData[6]?.map((row) => (
-        //         <TableRow
-        //           key={productList.find((product) => product.id === row.id).name}
-        //           sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
-        //         >
-        //           <TableCell component="th" scope="row">
-        //             {row.name}
-        //           </TableCell>
-        //           <TableCell align="right">{row.quantity}</TableCell>
-        //           <TableCell align="right">{row.price}</TableCell>
-        //         </TableRow>
-        //       ))}
-        //     </TableBody>
-        //   </Table>
-        // </TableContainer>
+        <TableRow>
+          <TableCell colSpan={colSpan}>
+            <TableContainer component={Paper}>
+              <Table size="small">
+                <TableHead sx={{ mb: 2 }}>
+                  <TableRow>
+                    <TableCell>Item</TableCell>
+                    <TableCell align="right">Quantity</TableCell>
+                    <TableCell align="right">Price</TableCell>
+                  </TableRow>
+                </TableHead>
+                <TableBody>
+                  {data.map((item, index) => (
+                    <TableRow key={index}>
+                      <TableCell component="th" scope="row">
+                        {
+                          productList.find((product) => product.id === item.id)
+                            .name
+                        }
+                      </TableCell>
+                      <TableCell align="right">{item.quantity}</TableCell>
+                      <TableCell align="right">{item.price}</TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </TableContainer>
+          </TableCell>
+        </TableRow>
       );
     },
   };
-  let data = {
-    id: 1,
-    creditorName: "John Doe",
-    amount: 100,
-    dueDate: "2023-12-12",
-    unpaid: 52,
-    paymentcovered: false,
-    products: ["Car Wax", "Spray paint", "Gypsum"],
-  };
   const getDetails = async () => {
     try {
-      const creditRef = collection(db, "sales");
       const creditData = await getDocs(creditRef);
       const filteredCredits = creditData.docs.map((doc) => ({
         ...doc.data(),
         id: doc.id,
       }));
-      console.log(filteredCredits[0].creditinfo.payment_covered);
+      setCredit(filteredCredits.filter((credit) => credit.credit === true));
       setCreditList(
         filteredCredits
           .filter((filteredCredit) => filteredCredit.credit === true)
@@ -172,7 +208,12 @@ function Credit() {
               filteredCredit.creditinfo.unpaid,
               filteredCredit.creditinfo.duedate,
               filteredCredit.id,
-              filteredCredit.creditinfo?.payment_covered ? "Paid" : "Unpaid",
+              filteredCredit.creditinfo?.payment_covered === true
+                ? "Paid"
+                : "Unpaid",
+              filteredCredit.creditinfo?.payment_covered === true
+                ? "Paid"
+                : "Unpaid",
             ];
             // return {
             //   id: filteredCredit.id,
@@ -185,6 +226,7 @@ function Credit() {
             // };
           })
       );
+      console.log(typeof filteredCredits[0]?.creditinfo?.payment_covered);
       const productRef = collection(db, "products");
       const productData = await getDocs(productRef);
       const filteredProducts = productData.docs.map((doc) => ({
@@ -228,18 +270,15 @@ function Credit() {
               Credit Information
             </Typography>
             <Typography id="modal-modal-description" sx={{ mt: 2 }}>
-              Name: {data.creditorName}
+              Name: {modalData?.creditorName}
             </Typography>
             <Typography id="modal-modal-description" sx={{ mt: 2 }}>
-              Credited Items: {data.products.length}
-            </Typography>
-            <Typography id="modal-modal-description" sx={{ mt: 2 }}>
-              Due Date: {data.dueDate}
+              Due Date: {modalData?.dueDate}
             </Typography>
             <TextField
               margin="normal"
               required
-              error={paid > data.unpaid}
+              error={paid > modalData?.unpaid || isNaN(paid)}
               fullWidth
               id="paid"
               label="Amount Paid"
@@ -250,16 +289,24 @@ function Credit() {
               autoFocus
             />
             <Typography id="modal-modal-description" sx={{ mt: 2 }}>
-              Amount Left: {data.unpaid - paid}
+              Amount Left: {modalData?.unpaid - paid}
             </Typography>
             <Button
-              onClick={handleClose}
+              onClick={() => handleClose(modalData, modalData?.unpaid - paid)}
               variant="outlined"
+              disabled={paid > modalData?.unpaid || isNaN(paid)}
               sx={{ mr: 2, mt: 2 }}>
               Update
             </Button>
-            <Button onClick={handleClose} variant="contained" sx={{ mt: 2 }}>
-              Credit Covered
+            <Button
+              onClick={() => {
+                setCovered(true);
+                handleClose(modalData);
+              }}
+              variant="outlined"
+              disabled={paid > modalData?.unpaid || isNaN(paid)}
+              sx={{ mr: 2, mt: 2 }}>
+              Payment Covered
             </Button>
           </Box>
         </Modal>

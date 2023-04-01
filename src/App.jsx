@@ -17,8 +17,16 @@ import Home from "./pages/Home";
 import RequireAuth from "./components/RequireAuth";
 
 function App() {
+  let getMode = localStorage.getItem("mode");
   const [mode, setMode] = useState(true);
+  if (getMode === null || getMode === undefined) {
+    localStorage.setItem("mode", "light");
+    setMode(true);
+  } else if (mode !== (getMode === "light")) {
+    setMode(getMode === "light" ? true : false);
+  }
   function changeMode() {
+    localStorage.setItem("mode", mode ? "dark" : "light");
     setMode(!mode);
   }
   const theme = createTheme();
@@ -39,7 +47,9 @@ function App() {
           <Route exact path="/" element={<Home />} />
           <Route path="/login" element={<Login />} />
           <Route element={<RequireAuth />}>
-            <Route path="/salesperson" element={<Salesperson mode={changeMode} />}>
+            <Route
+              path="/salesperson"
+              element={<Salesperson mode={changeMode} />}>
               <Route index element={<Sales />} />
               <Route path="credit" element={<Credit />} />
               <Route path="addproduct" element={<AddProduct />} />
