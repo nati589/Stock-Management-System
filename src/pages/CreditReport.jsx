@@ -1,31 +1,110 @@
-import { Grid } from "@mui/material";
+import { 
+  Grid, 
+  Typography,
+  Paper,
+  Table,
+  TableCell,
+  TableContainer,
+  TableHead,
+  TableBody,
+  TableRow,
+} from "@mui/material";
 import { styled } from "@mui/system";
 import MUIDataTable from "mui-datatables";
-import React, { useState } from "react";
+import { useEffect, useState } from "react";
+import { db } from "../config/firebase";
+import { getDocs, collection, updateDoc, doc } from "firebase/firestore";
 
 const StyledMUIDataTable = styled(MUIDataTable)(({ theme }) => ({
   background: theme.palette.background.default,
 }));
-const columns = ["Name", "Date", "Due Date", "Days Left", "Total", 'Status'];
-
-const data = [
-  ["John Doe", "2023/3/3", "2023/3/4", "1", '3000', 'Unpaid'],
-  ["Joe James", "2023/2/3", "2023/3/3", "30", '3000', 'Paid'],
-  ["Dillon Dannis", "2023/3/3", "2023/3/4", "1", '3000', 'Unpaid'],
-  ["Tina Turner", "2023/3/3", "2023/3/5", "2", '3000', 'Paid'],
-  ["Luka Doncic", "2023/3/3", "2023/3/4", "1", '3000', 'Unpaid'],
-  ["John Doe", "2023/3/3", "2023/3/4", "1", '3000', 'Unpaid'],
-  ["Joe James", "2023/2/3", "2023/3/3", "30", '3000', 'Paid'],
-  ["Dillon Dannis", "2023/3/3", "2023/3/4", "1", '3000', 'Unpaid'],
-  ["Tina Turner", "2023/3/3", "2023/3/5", "2", '3000', 'Paid'],
-  ["Luka Doncic", "2023/3/3", "2023/3/4", "1", '3000', 'Unpaid'],
-];
-
-const options = {
-  filterType: "checkbox",
-};
+const columns = ["Name", "Date Sold", "Due Date", "Total", "ID", "Salesperson", 'Status'];
 
 function CreditReport() {
+  const creditRef = collection(db, "sales");
+  const [credit, setCredit] = useState([])
+  const [creditList, setCreditList] = useState([])
+  const [productList, setProductList] = useState([])
+
+  const options = {
+    filterType: "checkbox",
+    elevation: 0,
+    selectableRows: "none",
+    expandableRows: true,
+      expandableRowsHeader: false,
+      expandableRowsOnClick: true,
+      renderExpandableRow: (rowData, rowMeta) => {
+        const colSpan = rowData.length + 1;
+        const data = creditList.find((credit) => credit.id === rowData[4]).items;
+        return (
+          <TableRow>
+            <TableCell colSpan={colSpan}>
+              <TableContainer component={Paper}>
+                <Table size="small">
+                  <TableHead sx={{ mb: 2 }}>
+                    <TableRow>
+                      <TableCell>Item</TableCell>
+                      <TableCell align="right">Quantity</TableCell>
+                      <TableCell align="right">Price</TableCell>
+                    </TableRow>
+                  </TableHead>
+                  <TableBody>
+                    {data.map((item, index) => (
+                      <TableRow key={index}>
+                        <TableCell component="th" scope="row">
+                          {
+                            productList.find((product) => product.id === item.id)
+                              .name
+                          }
+                        </TableCell>
+                        <TableCell align="right">{item.quantity}</TableCell>
+                        <TableCell align="right">{item.price}</TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+              </TableContainer>
+            </TableCell>
+          </TableRow>
+        );
+      },
+  };
+
+  const getDetails = async () => {
+    try {
+      const creditData = await getDocs(creditRef);
+      const filteredCredits = creditData.docs.map((doc) => ({
+        ...doc.data(),
+        id: doc.id,
+      }));
+      setCreditList(filteredCredits.filter((credit) => credit.credit === true))
+      setCredit(filteredCredits.filter((credit) => credit.credit === true).map((filteredCredit) => {
+        return [
+          filteredCredit.creditinfo.name,
+          filteredCredit.date_sold,
+          filteredCredit.creditinfo.duedate,
+          filteredCredit.total,
+          filteredCredit.id,
+          filteredCredit.seller,
+          filteredCredit.creditinfo?.payment_covered === true
+            ? "Paid"
+            : "Unpaid",
+        ];
+      }));
+      const productRef = collection(db, "products");
+      const productData = await getDocs(productRef);
+      const filteredProducts = productData.docs.map((doc) => ({
+        ...doc.data(),
+        id: doc.id,
+      }));
+      setProductList(filteredProducts);
+    } catch (error) {
+      console.error(error);
+    }
+  }
+  useEffect(() => {
+    getDetails();
+  }, [])
   return (
     <Grid container spacing={1} sx={{ pl: 1, pr: 1 }}>
       <Grid
@@ -33,16 +112,14 @@ function CreditReport() {
         xs={12}
         md={12}
         sx={{
-          //  maxHeight: "80vh",
-          //  overflowY: "scroll",
           pr: 1,
         }}>
-        {/* <Typography variant="h4" sx={{ mb: 2}}>
-          Sales
-      </Typography> */}
+        <Typography variant="h4" sx={{ mb: 2}}>
+          Credit Report
+      </Typography>
         <StyledMUIDataTable
           title={"Credits"}
-          data={data}
+          data={credit}
           columns={columns}
           options={options}
         />

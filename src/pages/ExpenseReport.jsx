@@ -1,9 +1,11 @@
 import { 
-    Grid, 
+    Grid, Typography, 
 } from "@mui/material";
 import { styled } from "@mui/system";
 import MUIDataTable from "mui-datatables";
-import React, { useState } from "react";
+import { useEffect, useState } from "react";
+import { db } from "../config/firebase";
+import { getDocs, collection, updateDoc, doc } from "firebase/firestore";
 
 const StyledMUIDataTable = styled(MUIDataTable)(({ theme }) => ({
   background: theme.palette.background.default,
@@ -11,23 +13,40 @@ const StyledMUIDataTable = styled(MUIDataTable)(({ theme }) => ({
 const columns = ["Type", "Verification", "Payment", "Date"];
 
 const data = [
-  ["Labour", "Abubeker T.", "250", "2023/3/4"],
-  ["Delivery", "A34567", "160", "2023/3/4"],
-  ["Labour", "Abubeker T.", "250", "2023/3/4"],
-  ["Delivery", "A34567", "160", "2023/3/4"],
-  ["Labour", "Abubeker T.", "250", "2023/3/4"],
-  ["Delivery", "A34567", "160", "2023/3/4"],
-  ["Labour", "Abubeker T.", "250", "2023/3/4"],
-  ["Delivery", "A34567", "160", "2023/3/4"],
-  ["Labour", "Abubeker T.", "250", "2023/3/4"],
   ["Delivery", "A34567", "160", "2023/3/4"],
 ];
-
 const options = {
   filterType: "checkbox",
+  elevation: 0,
+  selectableRows: "none",
 };
 
 function ExpenseReport() {
+  const [expenseList, setExpenseList] = useState([])
+  const expenseRef = collection(db, "expenses");
+
+  const getDetails = async () => {
+    try {
+      const expenseData = await getDocs(expenseRef);
+      const filteredExpenses = expenseData.docs.map((doc) => ({
+        ...doc.data(),
+        id: doc.id,
+      }));
+      setExpenseList(filteredExpenses.map((expense) => {
+        return [
+          expense.type,
+          expense.verification,
+          expense.price,
+          expense.date_added,
+        ]
+      }));
+    } catch (error) {
+      console.error(error);
+    }
+  }
+  useEffect(() => {
+    getDetails();
+  }, [])
   return (
     <Grid container spacing={1} sx={{ pl: 1, pr: 1 }}>
       <Grid
@@ -35,20 +54,17 @@ function ExpenseReport() {
         xs={12}
         md={12}
         sx={{
-          //  maxHeight: "80vh",
-          //  overflowY: "scroll",
           pr: 1,
         }}>
-        {/* <Typography variant="h4" sx={{ mb: 2}}>
-          Sales
-      </Typography> */}
+        <Typography variant="h4" sx={{ mb: 2}}>
+          Expense Report
+      </Typography>
         <StyledMUIDataTable
           title={"Expenses"}
-          data={data}
+          data={expenseList}
           columns={columns}
           options={options}
         />
-        {/* <Products cardData={cardData} addToCart={addToCart} /> */}
       </Grid>
     </Grid>
   )
