@@ -66,6 +66,7 @@ function Sales() {
   const userRef = collection(db, "users");
   const [products, setProducts] = useState([]);
   const [sortedProducts, setSortedProducts] = useState([]);
+  const [searchData, setSearchData] = useState("");
   const [categories, setCategories] = useState([]);
   const [users, setUsers] = useState([]);
   const [openSnackbar, setOpenSnackbar] = useState(false);
@@ -109,7 +110,7 @@ function Sales() {
     }
   };
 
-  useEffect(() => {  
+  useEffect(() => {
     getProducts();
     getCategories();
     getUsers();
@@ -142,7 +143,6 @@ function Sales() {
   return (
     <Grid container spacing={1} sx={{ pl: 1, pr: 1 }}>
       <Grid item xs={8} md={7} sx={{ maxHeight: "80vh", overflowY: "scroll" }}>
-        {/* <Paper elevation={false}> */}
         <Box
           sx={{
             display: "flex",
@@ -152,30 +152,30 @@ function Sales() {
             pl: 0,
             pr: 0,
           }}>
-          {/* <Typography sx={{ mr: 5 }} variant="h5">
-            Categories
-          </Typography> */}
           <Categories data={categories} handleSort={handleSort} />
-          <Search
-          // sx={{ flexGrow: 1 }}
-          >
+          <Search>
             <SearchIconWrapper>
               <SearchOutlined />
             </SearchIconWrapper>
             <StyledInputBase
               placeholder="Search…"
               inputProps={{ "aria-label": "search" }}
-              onChange={(event) =>
-                setSortedProducts(
-                  products.filter((item) =>
-                    item.name.includes(event.target.value)
-                  )
-                )
-              }
+              onChange={(event) => setSearchData(event.target.value)}
             />
           </Search>
         </Box>
-        <Products data={sortedProducts} addToCart={addToCart} />
+        <Products
+          data={
+            searchData === ""
+              ? sortedProducts
+              : sortedProducts.filter((sortedProduct) =>
+                  sortedProduct.name
+                    .toLowerCase()
+                    .includes(searchData.toLowerCase())
+                )
+          }
+          addToCart={addToCart}
+        />
         {/* </Paper> */}
       </Grid>
       <Grid item xs={4} md={5} sx={{ maxHeight: "80vh" }}>

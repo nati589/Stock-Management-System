@@ -10,15 +10,19 @@ import React, { useState } from "react";
 import InfoOutlinedIcon from "@mui/icons-material/InfoOutlined";
 import InfoIcon from "@mui/icons-material/Info";
 import { Box } from "@mui/system";
+import styled from "@emotion/styled";
 
 function ProductCard({ data, addToCart }) {
   const [info, showInfo] = useState(false);
+  const MyCard = styled(Card)(({ theme }) => ({
+    // backgroundColor: theme.palette.grey[50],
+  }))
   function toggleInfo() {
     showInfo(!info);
   }
   return (
     <Box>
-      <Card variant="outlined" sx={{ borderRadius: 3, borderWidth: 3 }}>
+      <MyCard variant="outlined" sx={{ borderRadius: 3, borderWidth: 3 }}>
         <Box sx={{ display: "flex", justifyContent: "flex-end" }}>
           <IconButton onClick={toggleInfo} color="primary">
             {!info && <InfoOutlinedIcon />}
@@ -27,7 +31,7 @@ function ProductCard({ data, addToCart }) {
         </Box>
         <CardContent sx={{ minHeight: 130 }}>
           <Box>
-            {!info && <Typography align="center">{data.name}</Typography>}
+            {!info && <Typography align="center" noWrap>{data.name}</Typography>}
             {!info && (
                             <Typography align="center">Quantity: {data.quantity}</Typography>
 
@@ -47,7 +51,7 @@ function ProductCard({ data, addToCart }) {
             ADD
           </Button>
         </CardActions>
-      </Card>
+      </MyCard>
     </Box>
   );
 }
