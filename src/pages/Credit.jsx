@@ -24,7 +24,6 @@ import { getDocs, collection, updateDoc, doc } from "firebase/firestore";
 function Credit() {
   const [open, setOpen] = useState(false);
   const [paid, setPaid] = useState(0);
-  const [covered, setCovered] = useState(false);
   const [modalData, setModalData] = useState();
   const [credit, setCredit] = useState([]);
   const [creditList, setCreditList] = useState([]);
@@ -33,17 +32,18 @@ function Credit() {
   const [openSnackbar, setOpenSnackbar] = useState(false);
 
   // console.log(creditList)
-  const handleClose = async (data, unpaid, reason) => {
+  const handleClose = async (data, unpaid, covered, reason) => {
     if (reason === "backdropClick") {
       console.log(reason);
     } else {
-      if (covered) {
+      if (covered || unpaid === 0) {
+        console.log(unpaid)
         try {
           const creditDoc = doc(db, "sales", data.id);
           await updateDoc(creditDoc, {
             creditinfo: {
               payment_covered: true,
-              unpaid: 0,
+              unpaid: unpaid,
               name: data.creditorName,
               duedate: data.dueDate,
             },
@@ -68,7 +68,6 @@ function Credit() {
           console.error(error);
         }
       }
-      setCovered(false);
       setPaid(0);
       setModalData();
       setOpen(false);
@@ -96,13 +95,29 @@ function Credit() {
   }));
   const columns = [
     "Name",
-    "Amount",
-    "Unpaid",
-    "Due Date",
+    {
+      name: "Amount",
+      options: {
+        filter: false,
+      }
+    },
+    {
+      name: "Unpaid",
+      options: {
+        filter: false,
+      }
+    },
+    {
+      name: "Due Date",
+      options: {
+        filter: false,
+      }
+    },
     {
       name: "ID",
       options: {
         display: false,
+        filter: false,
       }
     }, 
     "Status",
@@ -122,7 +137,7 @@ function Credit() {
     //   name: "products",
     // },
     {
-      label: "Action",
+      label: "ACTION",
       options: {
         filter: false,
         sort: false,
@@ -202,10 +217,10 @@ function Credit() {
         ...doc.data(),
         id: doc.id,
       }));
-      setCredit(filteredCredits.filter((credit) => credit.credit === true));
+      setCredit(filteredCredits.filter((credit) => credit?.creditinfo?.payment_covered === false));
       setCreditList(
         filteredCredits
-          .filter((filteredCredit) => filteredCredit.credit === true)
+          .filter((filteredCredit) => filteredCredit?.creditinfo?.payment_covered === false)
           .map((filteredCredit) => {
             return [
               filteredCredit.creditinfo.name,
@@ -231,7 +246,7 @@ function Credit() {
             // };
           })
       );
-      console.log(typeof filteredCredits[0]?.creditinfo?.payment_covered);
+      // console.log(typeof filteredCredits[0]?.creditinfo?.payment_covered);
       const productRef = collection(db, "products");
       const productData = await getDocs(productRef);
       const filteredProducts = productData.docs.map((doc) => ({
@@ -297,7 +312,7 @@ function Credit() {
               Amount Left: {modalData?.unpaid - paid}
             </Typography>
             <Button
-              onClick={() => handleClose(modalData, modalData?.unpaid - paid)}
+              onClick={() => handleClose(modalData, modalData?.unpaid - paid, false)}
               variant="outlined"
               disabled={paid > modalData?.unpaid || isNaN(paid)}
               sx={{ mr: 2, mt: 2 }}>
@@ -305,8 +320,7 @@ function Credit() {
             </Button>
             <Button
               onClick={() => {
-                setCovered(true);
-                handleClose(modalData);
+                handleClose(modalData, 0, true);
               }}
               variant="outlined"
               disabled={paid > modalData?.unpaid || isNaN(paid)}

@@ -40,7 +40,9 @@ function Expense() {
     } catch (err) {
       console.error(err);
     }
-    console.log("done");
+    setCategory("");
+    setPrice("");
+    setVerification("");
   };
 
   return (

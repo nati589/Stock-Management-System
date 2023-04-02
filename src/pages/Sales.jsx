@@ -1,21 +1,16 @@
 import { SearchOutlined } from "@mui/icons-material";
 import { Alert, alpha, Snackbar } from "@mui/material";
 import { InputBase } from "@mui/material";
-import { Grid, Typography } from "@mui/material";
+import { Grid } from "@mui/material";
 import { styled } from "@mui/system";
 import { Box } from "@mui/system";
 import React, { useEffect, useState } from "react";
 import Categories from "../components/Categories";
-import OrderDetails from "../components/SaleDetails";
-// import ProductCard from '../components/ProductCard'
 import Products from "../components/Products";
 import { db } from "../config/firebase";
 import {
   getDocs,
   collection,
-  addDoc,
-  updateDoc,
-  doc,
 } from "firebase/firestore";
 import SaleDetails from "../components/SaleDetails";
 
@@ -109,7 +104,6 @@ function Sales() {
       console.error("hi");
     }
   };
-
   useEffect(() => {
     getProducts();
     getCategories();
@@ -120,7 +114,6 @@ function Sales() {
     if (!cart.includes(product)) {
       setCart([...cart, product]);
     }
-    // console.log(cart);
   };
   const removeCart = () => {
     setCart([]);
@@ -132,13 +125,6 @@ function Sales() {
       setSortedProducts(products.filter((item) => item.category === event));
     }
   };
-  const handleSale = async (
-    seller,
-    credit,
-    creditorName,
-    creditDueDate,
-    subtotal
-  ) => {};
 
   return (
     <Grid container spacing={1} sx={{ pl: 1, pr: 1 }}>
@@ -176,7 +162,6 @@ function Sales() {
           }
           addToCart={addToCart}
         />
-        {/* </Paper> */}
       </Grid>
       <Grid item xs={4} md={5} sx={{ maxHeight: "80vh" }}>
         <SaleDetails
@@ -184,7 +169,6 @@ function Sales() {
           cart={cart}
           removeCart={removeCart}
           handleSnackbarOpen={setOpenSnackbar}
-          // getProducts={getProducts}
         />
       </Grid>
       <Snackbar

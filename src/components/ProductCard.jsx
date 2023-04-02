@@ -38,12 +38,9 @@ function ProductCard({ data, addToCart }) {
             )}
             {info && <Typography align="center">{data.name}</Typography>}
             {info && (
-              <Typography align="center">U/Price: {data.price_bought}</Typography>
-            )}
-            {info && <Typography align="center">Unit: {data.unit}</Typography>}
-            {info && (
               <Typography align="center">Quantity: {data.quantity}</Typography>
             )}
+            {info && <Typography align="center">Unit: {data.unit}</Typography>}
           </Box>
         </CardContent>
         <CardActions sx={{ display: "flex", justifyContent: "center" }}>

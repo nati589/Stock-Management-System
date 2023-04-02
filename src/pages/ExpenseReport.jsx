@@ -10,13 +10,29 @@ import { getDocs, collection, updateDoc, doc } from "firebase/firestore";
 const StyledMUIDataTable = styled(MUIDataTable)(({ theme }) => ({
   background: theme.palette.background.default,
 }));
-const columns = ["Type", "Verification", "Payment", "Date"];
-
-const data = [
-  ["Delivery", "A34567", "160", "2023/3/4"],
+const columns = [
+  "Type", 
+  {
+    name: "Verification", 
+    options: {
+      filter: false,
+    },
+  }, 
+  {
+    name: "Payment", 
+    options: {
+      filter: false,
+    },
+  }, 
+  {
+    name: "Date", 
+    options: {
+      filter: false,
+    },
+  },   
 ];
 const options = {
-  filterType: "checkbox",
+  // filterType: "checkbox",
   elevation: 0,
   selectableRows: "none",
 };

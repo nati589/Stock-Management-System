@@ -12,10 +12,30 @@ import { getDocs, collection } from "firebase/firestore";
 const StyledMUIDataTable = styled(MUIDataTable)(({ theme }) => ({
   background: theme.palette.background.default,
 }));
-const columns = ["Salesperson", "Products", "Date", "Total"];
+const columns = [
+  "Salesperson", 
+  {
+    name: "PRODUCTS",
+    options: {
+      filter: false,
+    }
+  }, 
+  {
+    name: "DATE SOLD",
+    options: {
+      filter: false,
+    }
+  },
+  {
+    name: "TOTAL",
+    options: {
+      filter: false,
+    }
+  },  
+];
 
 const options = {
-  filterType: "checkbox",
+  // filterType: "checkbox",
   selectableRows: "none",
   responsive: "standard",
   elevation: 0,
@@ -147,7 +167,7 @@ function AdminSales() {
           />
         </Grid>
         <Grid item xs={4} md={4} sx={{ maxHeight: "80vh" }}>
-          <Card>
+          <Card sx={{ mt: 5}}>
             <Typography variant="h6" sx={{ ml: 2, mb: 2 }}>
               Sales Summary
             </Typography>

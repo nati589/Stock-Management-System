@@ -33,14 +33,15 @@ import {
   writeBatch,
 } from "firebase/firestore";
 
-function SaleDetails({ users, cart, removeCart, handleSnackbarOpen }) {
+function SaleDetails({
+  users,
+  cart,
+  removeCart,
+  handleSnackbarOpen,
+}) {
   const [subtotal, setSubtotal] = useState([]);
   const [subtotalvalue, setSubtotalvalue] = useState(0);
   const [credit, setCredit] = useState(false);
-  // useEffect(() => {
-  // console.log(subtotal)
-  // getProducts()
-  // }, [])
 
   const formik = useFormik({
     initialValues: {
@@ -84,7 +85,9 @@ function SaleDetails({ users, cart, removeCart, handleSnackbarOpen }) {
             },
             date_sold: myDate,
           });
-          await batch.commit().then(() => handleSnackbarOpen(true));
+          await batch.commit().then(() => {
+            handleSnackbarOpen(true);
+          });
         } catch (error) {
           console.error(error);
         }
@@ -155,36 +158,6 @@ function SaleDetails({ users, cart, removeCart, handleSnackbarOpen }) {
     setSubtotalvalue(sum);
   };
 
-  // const handleClose = (event, reason) => {
-  //   if (reason === "backdropClick") {
-  //     console.log(reason);
-  //   } else {
-  //     setOpen(!open);
-  //   }
-  // };
-  // const handleSubmit = (event) => {
-  //   event.preventDefault();
-  //   console.log(seller, credit, creditorName, creditDueDate, subtotal);
-  //   handleSale(seller, credit, creditorName, creditDueDate, subtotal);
-  // };
-
-  // const handleBackdropClick = (event) => {
-  //   //these fail to keep the modal open
-  //   event.stopPropagation();
-  //   return false;
-  // };
-  // const style = {
-  //   position: "absolute",
-  //   top: "50%",
-  //   left: "50%",
-  //   transform: "translate(-50%, -50%)",
-  //   width: 400,
-  //   bgcolor: "background.paper",
-  //   border: "2px solid #000",
-  //   boxShadow: 24,
-  //   p: 4,
-  // };
-  // console.log(cardData, cart)
   return (
     <Card>
       <Typography variant="h6" sx={{ ml: 2 }}>
@@ -316,44 +289,6 @@ function SaleDetails({ users, cart, removeCart, handleSnackbarOpen }) {
             </Box>
           )}
           <Divider />
-          {/* <Modal
-            open={open}
-            onClose={handleClose}
-            onBackdropClick={handleBackdropClick}
-            disableEscapeKeyDown
-            aria-labelledby="modal-modal-title"
-            aria-describedby="modal-modal-description">
-            <Box sx={style}>
-              <Typography id="modal-modal-title" variant="h6" component="h2">
-                Credit Information
-              </Typography>
-              <Typography id="modal-modal-description" sx={{ mt: 2 }}>
-                Duis mollis, est non commodo luctus, nisi erat porttitor ligula.
-              </Typography>
-              <TextField
-                margin="normal"
-                required
-                fullWidth
-                id="creditor"
-                label="Creditor Name"
-                name="creditor"
-                // autoComplete="email"
-                autoFocus
-              />
-              <TextField
-                margin="normal"
-                required
-                fullWidth
-                id="duedate"
-                label="Due Date"
-                name="duedate"
-                type="date"
-                // autoComplete="email"
-                focused
-              />
-              <Button onClick={handleClose}>Save</Button>
-            </Box>
-          </Modal> */}
           <Box
             sx={{
               display: "flex",
@@ -393,7 +328,7 @@ function SaleDetails({ users, cart, removeCart, handleSnackbarOpen }) {
                 setSubtotal([]);
                 setSubtotalvalue(0);
                 setCredit(false);
-                formik.resetForm()
+                formik.resetForm();
               }}
               fullWidth
               sx={{ mr: 2 }}>

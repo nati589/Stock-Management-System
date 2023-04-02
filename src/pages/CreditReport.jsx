@@ -20,16 +20,29 @@ const StyledMUIDataTable = styled(MUIDataTable)(({ theme }) => ({
 }));
 const columns = [
   "Name",
-  "Date Sold",
-  "Due Date",
-  "Total",
+  {
+    name: "Date Sold",
+    options: {
+      filter: false,
+    },
+  },
+  {
+    name: "Due Date",
+    options: {
+      filter: false,
+    },
+  },
+  {
+    name: "Total",
+    options: {
+      filter: false,
+    },
+  }, 
   {
     name: "ID",
     options: {
       display: false,
       filter: false,
-      search: false,
-      sort: false,
     },
   },
   "Salesperson",
@@ -43,7 +56,7 @@ function CreditReport() {
   const [productList, setProductList] = useState([]);
 
   const options = {
-    filterType: "checkbox",
+    // filterType: "checkbox",
     elevation: 0,
     selectableRows: "none",
     expandableRows: true,

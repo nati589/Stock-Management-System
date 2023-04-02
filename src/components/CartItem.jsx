@@ -20,7 +20,6 @@ function CartItem({ cardData, index, handleSubtotal }) {
       </Grid>
       <Grid item md={5}>
         <Box sx={{ display: "flex", alignItems: "center" }}>
-          {/* <Button size="small"> */}
           <IconButton color="primary" onClick={() => {
             setQuantity(Number(quantity) - 1)
             handleSubtotal(
@@ -28,23 +27,17 @@ function CartItem({ cardData, index, handleSubtotal }) {
               {price: Number(price) , quantity: Number(quantity) - 1}
             );
             }} disabled={quantity <= 1 ? true: false}>
-            {/* <IndeterminateCheckBoxIcon fontSize="small" /> */}
             <RemoveOutlinedIcon fontSize="small" />
-            {/* <ArrowLeftIcon fontSize="small" /> */}
           </IconButton>
-          {/* </Button> */}
-          {/* <TextField id='quantity' defaultValue={0} label='' variant='outlined' type='number' /> */}
           <TextField
             error={quantityError}
-            // helperText={quantityError ? "Invalid input" : ""}
             id="quantity"
             size="small"
-            // defaultValue={0}
             onChange={(event) => {
               if (event.target.value < 1 || isNaN(event.target.value) || event.target.value > cardData.quantity) {
-                setQuantityError(true);
-                setQuantity(1);
-                handleSubtotal(index, {price: price, quantity: 1});
+                // setQuantityError(true);
+                setQuantity(cardData.quantity);
+                handleSubtotal(index, {price: price, quantity: cardData.quantity});
               } else {
                 if (quantityError) {
                   setQuantityError(false);
@@ -61,7 +54,6 @@ function CartItem({ cardData, index, handleSubtotal }) {
             value={quantity}
             inputProps={{ inputMode: "numeric", pattern: "[0-9]*" }}
           />
-          {/* <Button size="small"> */}
           <IconButton color="primary" onClick={() => {
             setQuantity(Number(quantity) + 1)
             handleSubtotal(
@@ -70,19 +62,13 @@ function CartItem({ cardData, index, handleSubtotal }) {
             );
             }} disabled={quantity >= cardData.quantity ? true: false}>
             <AddOutlinedIcon fontSize="small" />
-            {/* <AddBoxIcon fontSize="small" /> */}
-            {/* <ArrowRightIcon fontSize="small" /> */}
           </IconButton>
-          {/* </Button> */}
         </Box>
       </Grid>
       <Grid item md={3}>
-        {/* <TextField id="price" label="" variant="outlined" type='number'/> */}
         <TextField
           error={priceError}
-          // helperText={priceError ? "Invalid input" : ""}
           id="price"
-          // defaultValue={}
           size="small"
           onChange={(event) => {
             if (event.target.value < 0 || isNaN(event.target.value)) {

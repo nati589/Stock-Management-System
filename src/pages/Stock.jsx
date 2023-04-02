@@ -17,7 +17,7 @@ const StyledMUIDataTable = styled(MUIDataTable)(({ theme }) => ({
 }));
 
 const options = {
-  filterType: "checkbox",
+  // filterType: "checkbox",
   elevation: 0,
   selectableRows: "none",
 };
@@ -65,10 +65,30 @@ function Stock() {
   };
 
   const columns = [
-    "Products",
-    "Quantity",
-    "Unit",
-    "Unit Price",
+    {
+      name: "Products",
+      options: {
+        filter: false,
+      }
+    },     
+    {
+      name: "Quantity",
+      options: {
+        filter: false,
+      }
+    },     
+    {
+      name: "Unit",
+      options: {
+        filter: false,
+      }
+    }, 
+    {
+      name: "Unit Price",
+      options: {
+        filter: false,
+      }
+    }, 
     {
       name: "ID",
       options: {
@@ -77,9 +97,15 @@ function Stock() {
         sort: false,
       }
     },
+    {
+      name: "Date Added",
+      options: {
+        filter: false,
+      }
+    }, 
     "Category",
     {
-      label: "Action",
+      label: "ACTION",
       options: {
         filter: false,
         sort: false,
@@ -122,6 +148,7 @@ function Stock() {
           product.unit,
           product.price_bought,
           product.id,
+          product.date_added,
           product.category,
           product.added_by,
         ];
