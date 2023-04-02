@@ -15,7 +15,14 @@ import {
 import { Box } from "@mui/system";
 import { useEffect, useState } from "react";
 import { db } from "../config/firebase";
-import { getDocs, collection, addDoc, updateDoc, doc, writeBatch } from "firebase/firestore";
+import {
+  getDocs,
+  collection,
+  addDoc,
+  updateDoc,
+  doc,
+  writeBatch,
+} from "firebase/firestore";
 
 function AddProduct() {
   const [openSnackbar, setOpenSnackbar] = useState(false);
@@ -70,10 +77,12 @@ function AddProduct() {
     event.preventDefault();
     if (!newProduct) {
       try {
-        let productId = productList.find((item) => item.name === product)
-        const productDoc = doc(db, "products", productId.id)
-        console.log(quantity, productId.quantity)
-        await updateDoc(productDoc, { quantity: (Number(quantity) + Number(productId.quantity)) }).then(() => setOpenSnackbar(true))
+        let productId = productList.find((item) => item.name === product);
+        const productDoc = doc(db, "products", productId.id);
+        console.log(quantity, productId.quantity);
+        await updateDoc(productDoc, {
+          quantity: Number(quantity) + Number(productId.quantity),
+        }).then(() => setOpenSnackbar(true));
         getDetails();
       } catch (error) {
         console.error(error);
@@ -82,7 +91,7 @@ function AddProduct() {
       let date = new Date();
       let myDate = `${
         date.getMonth() + 1
-    }/${date.getDate()}/${date.getFullYear()}`;
+      }/${date.getDate()}/${date.getFullYear()}`;
       try {
         await addDoc(productsRef, {
           name: product,
@@ -93,12 +102,20 @@ function AddProduct() {
           quantity,
           unit,
         }).then(() => setOpenSnackbar(true));
-        await addDoc(categoryRef, { name: category });
+        if (categoryList.find((item) => item.name === category) === undefined) {
+          await addDoc(categoryRef, { name: category });
+        }
       } catch (err) {
         console.error(err);
       }
     }
-    console.log("done");
+    setCategory("");
+    setProduct("");
+    setAddedBy("");
+    setUnit("");
+    setQuantity("");
+    setNewProduct(false);
+    setNewCategory(false);
   };
   return (
     <Grid container sx={{ pl: 2, pr: 2 }}>
@@ -165,6 +182,7 @@ function AddProduct() {
                 id="quantity"
                 label="Quantity"
                 sx={{ mr: 2 }}
+                value={quantity}
                 onChange={(event) => setQuantity(event.target.value)}
                 name="quantity"
               />

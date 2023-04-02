@@ -1,5 +1,5 @@
-import { 
-  Grid, 
+import {
+  Grid,
   Typography,
   Paper,
   Table,
@@ -18,56 +18,72 @@ import { getDocs, collection, updateDoc, doc } from "firebase/firestore";
 const StyledMUIDataTable = styled(MUIDataTable)(({ theme }) => ({
   background: theme.palette.background.default,
 }));
-const columns = ["Name", "Date Sold", "Due Date", "Total", "ID", "Salesperson", 'Status'];
+const columns = [
+  "Name",
+  "Date Sold",
+  "Due Date",
+  "Total",
+  {
+    name: "ID",
+    options: {
+      display: false,
+      filter: false,
+      search: false,
+      sort: false,
+    },
+  },
+  "Salesperson",
+  "Status",
+];
 
 function CreditReport() {
   const creditRef = collection(db, "sales");
-  const [credit, setCredit] = useState([])
-  const [creditList, setCreditList] = useState([])
-  const [productList, setProductList] = useState([])
+  const [credit, setCredit] = useState([]);
+  const [creditList, setCreditList] = useState([]);
+  const [productList, setProductList] = useState([]);
 
   const options = {
     filterType: "checkbox",
     elevation: 0,
     selectableRows: "none",
     expandableRows: true,
-      expandableRowsHeader: false,
-      expandableRowsOnClick: true,
-      renderExpandableRow: (rowData, rowMeta) => {
-        const colSpan = rowData.length + 1;
-        const data = creditList.find((credit) => credit.id === rowData[4]).items;
-        return (
-          <TableRow>
-            <TableCell colSpan={colSpan}>
-              <TableContainer component={Paper}>
-                <Table size="small">
-                  <TableHead sx={{ mb: 2 }}>
-                    <TableRow>
-                      <TableCell>Item</TableCell>
-                      <TableCell align="right">Quantity</TableCell>
-                      <TableCell align="right">Price</TableCell>
+    expandableRowsHeader: false,
+    expandableRowsOnClick: true,
+    renderExpandableRow: (rowData, rowMeta) => {
+      const colSpan = rowData.length + 1;
+      const data = creditList.find((credit) => credit.id === rowData[4]).items;
+      return (
+        <TableRow>
+          <TableCell colSpan={colSpan}>
+            <TableContainer component={Paper}>
+              <Table size="small">
+                <TableHead sx={{ mb: 2 }}>
+                  <TableRow>
+                    <TableCell>Item</TableCell>
+                    <TableCell align="right">Quantity</TableCell>
+                    <TableCell align="right">Price</TableCell>
+                  </TableRow>
+                </TableHead>
+                <TableBody>
+                  {data.map((item, index) => (
+                    <TableRow key={index}>
+                      <TableCell component="th" scope="row">
+                        {
+                          productList.find((product) => product.id === item.id)
+                            .name
+                        }
+                      </TableCell>
+                      <TableCell align="right">{item.quantity}</TableCell>
+                      <TableCell align="right">{item.price}</TableCell>
                     </TableRow>
-                  </TableHead>
-                  <TableBody>
-                    {data.map((item, index) => (
-                      <TableRow key={index}>
-                        <TableCell component="th" scope="row">
-                          {
-                            productList.find((product) => product.id === item.id)
-                              .name
-                          }
-                        </TableCell>
-                        <TableCell align="right">{item.quantity}</TableCell>
-                        <TableCell align="right">{item.price}</TableCell>
-                      </TableRow>
-                    ))}
-                  </TableBody>
-                </Table>
-              </TableContainer>
-            </TableCell>
-          </TableRow>
-        );
-      },
+                  ))}
+                </TableBody>
+              </Table>
+            </TableContainer>
+          </TableCell>
+        </TableRow>
+      );
+    },
   };
 
   const getDetails = async () => {
@@ -77,20 +93,24 @@ function CreditReport() {
         ...doc.data(),
         id: doc.id,
       }));
-      setCreditList(filteredCredits.filter((credit) => credit.credit === true))
-      setCredit(filteredCredits.filter((credit) => credit.credit === true).map((filteredCredit) => {
-        return [
-          filteredCredit.creditinfo.name,
-          filteredCredit.date_sold,
-          filteredCredit.creditinfo.duedate,
-          filteredCredit.total,
-          filteredCredit.id,
-          filteredCredit.seller,
-          filteredCredit.creditinfo?.payment_covered === true
-            ? "Paid"
-            : "Unpaid",
-        ];
-      }));
+      setCreditList(filteredCredits.filter((credit) => credit.credit === true));
+      setCredit(
+        filteredCredits
+          .filter((credit) => credit.credit === true)
+          .map((filteredCredit) => {
+            return [
+              filteredCredit.creditinfo.name,
+              filteredCredit.date_sold,
+              filteredCredit.creditinfo.duedate,
+              filteredCredit.total,
+              filteredCredit.id,
+              filteredCredit.seller,
+              filteredCredit.creditinfo?.payment_covered === true
+                ? "Paid"
+                : "Unpaid",
+            ];
+          })
+      );
       const productRef = collection(db, "products");
       const productData = await getDocs(productRef);
       const filteredProducts = productData.docs.map((doc) => ({
@@ -101,10 +121,10 @@ function CreditReport() {
     } catch (error) {
       console.error(error);
     }
-  }
+  };
   useEffect(() => {
     getDetails();
-  }, [])
+  }, []);
   return (
     <Grid container spacing={1} sx={{ pl: 1, pr: 1 }}>
       <Grid
@@ -114,9 +134,9 @@ function CreditReport() {
         sx={{
           pr: 1,
         }}>
-        <Typography variant="h4" sx={{ mb: 2}}>
+        <Typography variant="h4" sx={{ mb: 2 }}>
           Credit Report
-      </Typography>
+        </Typography>
         <StyledMUIDataTable
           title={"Credits"}
           data={credit}
@@ -126,7 +146,7 @@ function CreditReport() {
         {/* <Products cardData={cardData} addToCart={addToCart} /> */}
       </Grid>
     </Grid>
-  )
+  );
 }
 
-export default CreditReport
+export default CreditReport;

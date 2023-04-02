@@ -183,7 +183,7 @@ function Sales() {
           users={users}
           cart={cart}
           removeCart={removeCart}
-          handleSale={handleSale}
+          handleSnackbarOpen={setOpenSnackbar}
           // getProducts={getProducts}
         />
       </Grid>
@@ -192,10 +192,10 @@ function Sales() {
         autoHideDuration={6000}
         onClose={() => setOpenSnackbar(false)}>
         <Alert
-          severity="error"
+          severity="success"
           onClose={() => setOpenSnackbar(false)}
           sx={{ width: "100%" }}>
-          Failed to load products
+          Sale registered
         </Alert>
       </Snackbar>
     </Grid>

@@ -1,4 +1,4 @@
-import { Box, Button, Grid, Modal, TextField, Typography } from "@mui/material";
+import { Alert, Box, Button, Grid, Modal, Snackbar, TextField, Typography } from "@mui/material";
 import { styled } from "@mui/system";
 import MUIDataTable from "mui-datatables";
 import { useEffect, useState } from "react";
@@ -24,6 +24,7 @@ const options = {
 
 function Stock() {
   const [open, setOpen] = useState(false);
+  const [openSnackbar, setOpenSnackbar] = useState(false);
   const [modalData, setModalData] = useState();
   const [price, setPrice] = useState(0);
   const productsRef = collection(db, "products");
@@ -35,8 +36,8 @@ function Stock() {
     } else {
       try {
         const productDoc = doc(db, "products", data.id);
-        await updateDoc(productDoc, { price_bought: price });
-        // .then(() => setOpenSnackbar(true))
+        await updateDoc(productDoc, { price_bought: price })
+        .then(() => setOpenSnackbar(true))
         getDetails();
       } catch (error) {
         console.error(error);
@@ -68,7 +69,14 @@ function Stock() {
     "Quantity",
     "Unit",
     "Unit Price",
-    "ID",
+    {
+      name: "ID",
+      options: {
+        display: false,
+        filter: false,
+        sort: false,
+      }
+    },
     "Category",
     {
       label: "Action",
@@ -189,6 +197,17 @@ function Stock() {
           </Box>
         </Modal>
       </Box>
+      <Snackbar
+        open={openSnackbar}
+        autoHideDuration={6000}
+        onClose={() => setOpenSnackbar(false)}>
+        <Alert
+          severity="success"
+          onClose={() => setOpenSnackbar(false)}
+          sx={{ width: "100%" }}>
+          Product updated successfully
+        </Alert>
+      </Snackbar>
     </Box>
   );
 }

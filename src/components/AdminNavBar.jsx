@@ -38,15 +38,18 @@ function AdminNavBar({ logout, mode }) {
             <MyLink to="/admin/creditreport">
               <Button>Credit</Button>
             </MyLink>
-              <MyLink to="/admin/expensereport">
-            <Button>
-                Expense
-            </Button>
-                </MyLink>
-            <Button onClick={() => {
+            <MyLink to="/admin/expensereport">
+              <Button>Expense</Button>
+            </MyLink>
+            <MyLink to="/admin/adduser">
+              <Button>New User</Button>
+            </MyLink>
+            <Button
+              onClick={() => {
                 localStorage.clear();
                 navigate("/login");
-              }} variant="outlined">
+              }}
+              variant="outlined">
               Log Out
             </Button>
           </Stack>

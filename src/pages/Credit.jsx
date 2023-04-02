@@ -12,6 +12,8 @@ import {
   TableRow,
   TextField,
   Typography,
+  Snackbar,
+  Alert,
 } from "@mui/material";
 import { useState, useEffect } from "react";
 import { Grid } from "@mui/material";
@@ -28,6 +30,7 @@ function Credit() {
   const [creditList, setCreditList] = useState([]);
   const [productList, setProductList] = useState([]);
   const creditRef = collection(db, "sales");
+  const [openSnackbar, setOpenSnackbar] = useState(false);
 
   // console.log(creditList)
   const handleClose = async (data, unpaid, reason) => {
@@ -44,8 +47,7 @@ function Credit() {
               name: data.creditorName,
               duedate: data.dueDate,
             },
-          });
-          // .then(() => setOpenSnackbar(true));
+          }).then(() => setOpenSnackbar(true));
           getDetails();
         } catch (error) {
           console.error(error);
@@ -60,16 +62,15 @@ function Credit() {
               name: data.creditorName,
               duedate: data.dueDate,
             },
-          });
-          // .then(() => setOpenSnackbar(true));
+          }).then(() => setOpenSnackbar(true));
           getDetails();
         } catch (error) {
           console.error(error);
         }
       }
-      setCovered(false)
-      setPaid(0)
-      setModalData()
+      setCovered(false);
+      setPaid(0);
+      setModalData();
       setOpen(false);
     }
   };
@@ -98,7 +99,12 @@ function Credit() {
     "Amount",
     "Unpaid",
     "Due Date",
-    "ID",
+    {
+      name: "ID",
+      options: {
+        display: false,
+      }
+    }, 
     "Status",
     // {
     //   label: "Products",
@@ -310,6 +316,17 @@ function Credit() {
           </Box>
         </Modal>
       </Box>
+      <Snackbar
+        open={openSnackbar}
+        autoHideDuration={6000}
+        onClose={() => setOpenSnackbar(false)}>
+        <Alert
+          severity="success"
+          onClose={() => setOpenSnackbar(false)}
+          sx={{ width: "100%" }}>
+          Updated successfully
+        </Alert>
+      </Snackbar>
     </Box>
   );
 }

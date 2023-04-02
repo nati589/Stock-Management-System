@@ -1,4 +1,5 @@
 import {
+  Alert,
   Button,
   Card,
   FormControl,
@@ -6,6 +7,7 @@ import {
   InputLabel,
   MenuItem,
   Select,
+  Snackbar,
   TextField,
   Typography,
 } from "@mui/material";
@@ -17,6 +19,7 @@ import { collection, addDoc } from "firebase/firestore";
 
 function Expense() {
   const [category, setCategory] = useState("");
+  const [openSnackbar, setOpenSnackbar] = useState(false);
   const [price, setPrice] = useState("");
   const [verification, setVerification] = useState('');
   const expenseRef = collection(db, "expenses");
@@ -32,7 +35,8 @@ function Expense() {
     }/${date.getDate()}/${date.getFullYear()}`;
 
     try {
-      await addDoc(expenseRef, { type: category, date_added: myDate, price, verification });
+      await addDoc(expenseRef, { type: category, date_added: myDate, price, verification })
+      .then(() => setOpenSnackbar(true));
     } catch (err) {
       console.error(err);
     }
@@ -95,6 +99,17 @@ function Expense() {
           </Box>
         </Card>
       </Grid>
+      <Snackbar
+        open={openSnackbar}
+        autoHideDuration={6000}
+        onClose={() => setOpenSnackbar(false)}>
+        <Alert
+          severity="success"
+          onClose={() => setOpenSnackbar(false)}
+          sx={{ width: "100%" }}>
+          Expense added successfully
+        </Alert>
+      </Snackbar>
     </Grid>
   );
 }

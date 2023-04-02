@@ -33,7 +33,7 @@ import {
   writeBatch,
 } from "firebase/firestore";
 
-function SaleDetails({ users, cart, removeCart, handleSale }) {
+function SaleDetails({ users, cart, removeCart, handleSnackbarOpen }) {
   const [subtotal, setSubtotal] = useState([]);
   const [subtotalvalue, setSubtotalvalue] = useState(0);
   const [credit, setCredit] = useState(false);
@@ -53,7 +53,7 @@ function SaleDetails({ users, cart, removeCart, handleSale }) {
       creditorName: Yup.string().required("Required field"),
       creditDueDate: Yup.date().required("Required field"),
     }),
-    onSubmit: (values) => {
+    onSubmit: (values, { resetForm }) => {
       console.log(subtotal);
       const submitSale = async () => {
         const batch = writeBatch(db);
@@ -70,26 +70,31 @@ function SaleDetails({ users, cart, removeCart, handleSale }) {
           date.getMonth() + 1
         }/${date.getDate()}/${date.getFullYear()}`;
         const saleDoc = collection(db, "sales");
-        await addDoc(saleDoc, {
-          credit,
-          items: subtotal,
-          total: subtotalvalue,
-          seller: values.seller,
-          creditinfo: {
-            name: values.creditorName,
-            duedate: values.creditDueDate,
-            unpaid: subtotalvalue,
-            payment_covered: false,
-          },
-          date_sold: myDate,
-        });
-        await batch.commit();
+        try {
+          await addDoc(saleDoc, {
+            credit,
+            items: subtotal,
+            total: subtotalvalue,
+            seller: values.seller,
+            creditinfo: {
+              name: values.creditorName,
+              duedate: values.creditDueDate,
+              unpaid: subtotalvalue,
+              payment_covered: false,
+            },
+            date_sold: myDate,
+          });
+          await batch.commit().then(() => handleSnackbarOpen(true));
+        } catch (error) {
+          console.error(error);
+        }
       };
       submitSale();
       removeCart();
       setSubtotal([]);
       setSubtotalvalue(0);
       setCredit(false);
+      resetForm({ values: "" });
     },
   });
   const formik2 = useFormik({
@@ -99,7 +104,7 @@ function SaleDetails({ users, cart, removeCart, handleSale }) {
     validationSchema: Yup.object({
       seller: Yup.string().required("Select a salesperson"),
     }),
-    onSubmit: (values) => {
+    onSubmit: (values, { resetForm }) => {
       console.log(subtotal);
       const submitSale = async () => {
         const batch = writeBatch(db);
@@ -115,17 +120,26 @@ function SaleDetails({ users, cart, removeCart, handleSale }) {
         let myDate = `${
           date.getMonth() + 1
         }/${date.getDate()}/${date.getFullYear()}`;
-        await batch.commit();
-        const saleDoc = collection(db, "sales");
-        await addDoc(saleDoc, {
-          credit,
-          items: subtotal,
-          total: subtotalvalue,
-          seller: values.seller,
-          date_sold: myDate,
-        });
+        try {
+          await batch.commit();
+          const saleDoc = collection(db, "sales");
+          await addDoc(saleDoc, {
+            credit,
+            items: subtotal,
+            total: subtotalvalue,
+            seller: values.seller,
+            date_sold: myDate,
+          }).then(() => handleSnackbarOpen(true));
+        } catch (error) {
+          console.error(error);
+        }
       };
       submitSale();
+      removeCart();
+      setSubtotal([]);
+      setSubtotalvalue(0);
+      setCredit(false);
+      resetForm({ values: "" });
     },
   });
 
@@ -379,6 +393,7 @@ function SaleDetails({ users, cart, removeCart, handleSale }) {
                 setSubtotal([]);
                 setSubtotalvalue(0);
                 setCredit(false);
+                formik.resetForm()
               }}
               fullWidth
               sx={{ mr: 2 }}>

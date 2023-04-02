@@ -13,6 +13,7 @@ import AdminSales from "./components/AdminSales";
 import Stock from "./pages/Stock";
 import CreditReport from "./pages/CreditReport";
 import ExpenseReport from "./pages/ExpenseReport";
+import AddUser from "./pages/AddUser";
 import Home from "./pages/Home";
 import RequireAuth from "./components/RequireAuth";
 
@@ -62,6 +63,7 @@ function App() {
               <Route path="stock" element={<Stock />} />
               <Route path="creditreport" element={<CreditReport />} />
               <Route path="expensereport" element={<ExpenseReport />} />
+              <Route path="adduser" element={<AddUser />} />
             </Route>
           </Route>
         </Routes>
