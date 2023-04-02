@@ -63,7 +63,7 @@ function AddProduct() {
         ...doc.data(),
         id: doc.id,
       }));
-      setUserList(filteredUsers);
+      setUserList(filteredUsers.filter(user => user.admin === false));
       // console.log(filteredUsers);
     } catch (error) {
       console.error(error);

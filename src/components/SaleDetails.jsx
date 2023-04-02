@@ -70,6 +70,7 @@ function SaleDetails({
         let myDate = `${
           date.getMonth() + 1
         }/${date.getDate()}/${date.getFullYear()}`;
+        let [year, month, day] = values.creditDueDate.split("-");
         const saleDoc = collection(db, "sales");
         try {
           await addDoc(saleDoc, {
@@ -79,7 +80,7 @@ function SaleDetails({
             seller: values.seller,
             creditinfo: {
               name: values.creditorName,
-              duedate: values.creditDueDate,
+              duedate: `${month}/${day}/${year}`,
               unpaid: subtotalvalue,
               payment_covered: false,
             },

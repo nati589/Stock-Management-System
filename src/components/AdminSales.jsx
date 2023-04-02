@@ -1,4 +1,17 @@
-import { Box, FormControl, InputLabel, MenuItem, Select } from "@mui/material";
+import {
+  Box,
+  FormControl,
+  InputLabel,
+  MenuItem,
+  Paper,
+  Select,
+  Table,
+  TableCell,
+  TableHead,
+  TableBody,
+  TableContainer,
+  TableRow,
+} from "@mui/material";
 import { Card } from "@mui/material";
 import { CardContent } from "@mui/material";
 import { Divider } from "@mui/material";
@@ -13,40 +26,87 @@ const StyledMUIDataTable = styled(MUIDataTable)(({ theme }) => ({
   background: theme.palette.background.default,
 }));
 const columns = [
-  "Salesperson", 
+  "Salesperson",
   {
     name: "PRODUCTS",
     options: {
       filter: false,
-    }
-  }, 
+    },
+  },
   {
     name: "DATE SOLD",
     options: {
       filter: false,
-    }
+    },
   },
   {
     name: "TOTAL",
     options: {
       filter: false,
-    }
-  },  
+    },
+  },
+  {
+    name: "ID",
+    options: {
+      filter: false,
+      display: false,
+      sort: false,
+      search: false,
+    },
+  },
 ];
-
-const options = {
-  // filterType: "checkbox",
-  selectableRows: "none",
-  responsive: "standard",
-  elevation: 0,
-};
 
 function AdminSales() {
   const salesRef = collection(db, "sales");
   const [salesList, setSalesList] = useState([]);
   const [tableData, setTableData] = useState([]);
+  const productRef = collection(db, "products");
+  const [productList, setProductList] = useState([]);
   const [filter, setFilter] = useState("Today");
 
+  const options = {
+    elevation: 0,
+    responsive: "standard",
+    selectableRows: "none",
+    expandableRows: true,
+    expandableRowsHeader: false,
+    expandableRowsOnClick: true,
+    renderExpandableRow: (rowData, rowMeta) => {
+      const colSpan = rowData.length + 1;
+      const data = salesList.find((sale) => sale.id === rowData[4])?.items;
+      return (
+        <TableRow>
+          <TableCell colSpan={colSpan}>
+            <TableContainer component={Paper}>
+              <Table size="small">
+                <TableHead sx={{ mb: 2 }}>
+                  <TableRow>
+                    <TableCell>Item</TableCell>
+                    <TableCell align="right">Quantity</TableCell>
+                    <TableCell align="right">Price</TableCell>
+                  </TableRow>
+                </TableHead>
+                <TableBody>
+                  {data.map((item, index) => (
+                    <TableRow key={index}>
+                      <TableCell component="th" scope="row">
+                        {
+                          productList.find((product) => product.id === item.id)
+                            ?.name
+                        }
+                      </TableCell>
+                      <TableCell align="right">{item.quantity}</TableCell>
+                      <TableCell align="right">{item.price}</TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </TableContainer>
+          </TableCell>
+        </TableRow>
+      );
+    },
+  };
   const handleSubTotalSum = (data) => {
     let sum = 0;
     for (let val = 0; val < data.length; val++) {
@@ -76,7 +136,13 @@ function AdminSales() {
               sale?.creditinfo?.payment_covered === true
           )
           .map((sale) => {
-            return [sale.seller, sale.items.length, sale.date_sold, sale.total];
+            return [
+              sale.seller,
+              sale.items.length,
+              sale.date_sold,
+              sale.total,
+              sale.id,
+            ];
           })
           .filter((sale) => {
             let now = new Date();
@@ -88,6 +154,12 @@ function AdminSales() {
             );
           })
       );
+      const productData = await getDocs(productRef);
+      const filteredProducts = productData.docs.map((doc) => ({
+        ...doc.data(),
+        id: doc.id,
+      }));
+      setProductList(filteredProducts);
     } catch (error) {
       console.error(error);
     }
@@ -96,7 +168,7 @@ function AdminSales() {
     setTableData(
       salesList
         .map((sale) => {
-          return [sale.seller, sale.items.length, sale.date_sold, sale.total];
+          return [sale.seller, sale.items.length, sale.date_sold, sale.total, sale.id];
         })
         .filter((sale) => {
           let now = new Date();
@@ -167,7 +239,7 @@ function AdminSales() {
           />
         </Grid>
         <Grid item xs={4} md={4} sx={{ maxHeight: "80vh" }}>
-          <Card sx={{ mt: 5}}>
+          <Card sx={{ mt: 5 }}>
             <Typography variant="h6" sx={{ ml: 2, mb: 2 }}>
               Sales Summary
             </Typography>

@@ -15,10 +15,16 @@ import { useFormik } from "formik";
 import * as Yup from "yup";
 import { useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
-// import { auth } from "../config/firebase";
-// import { createUserWithEmailAndPassword } from "firebase/auth";
-// import { useNavigate } from "react-router-dom";
-// import { createTheme, ThemeProvider } from '@mui/material/styles';
+import { db } from "../config/firebase";
+import {
+  getDocs,
+  collection,
+  addDoc,
+  updateDoc,
+  doc,
+  writeBatch,
+} from "firebase/firestore";
+import { Alert, Snackbar } from "@mui/material";
 
 function Copyright(props) {
   return (
@@ -29,23 +35,33 @@ function Copyright(props) {
       {...props}>
       {"Copyright © "}
       <Link color="inherit" href="https://mui.com/">
-        Website name
+        Stock Management System
       </Link>{" "}
       {new Date().getFullYear()}
       {"."}
     </Typography>
   );
 }
-// await createUserWithEmailAndPassword(auth, data.get("email"), data.get("password"))
-// console.log({
-//   email: data.get('email'),
-//   password: data.get('password'),
-// });
-// Location
 
 function Login() {
+  const [userList, setUserList] = useState([]);
+  const usersRef = collection(db, "users");
   const navigate = useNavigate();
   const [loggedIn, setLoggedIn] = useState(false);
+  const [openSnackbar, setOpenSnackbar] = useState(false);
+
+  const users = async () => {
+    try {
+      const userData = await getDocs(usersRef);
+      const filteredUsers = userData.docs.map((doc) => ({
+        ...doc.data(),
+        id: doc.id,
+      }));
+      setUserList(filteredUsers);
+    } catch (error) {
+      console.error(error);
+    }
+  };
   const formik = useFormik({
     initialValues: {
       username: "",
@@ -58,15 +74,25 @@ function Login() {
         .min(6, "Must be at least 6 characters"),
     }),
     onSubmit: (values) => {
-      // console.log(values);
-      if (values.username === "admin" && values.password === "123456") {
+      let currentUser = userList?.find(
+        (user) => user?.username === values?.username
+      );
+      if (
+        currentUser?.password === values?.password &&
+        currentUser?.admin === true
+      ) {
         localStorage.setItem("loggedInUser", true);
         localStorage.setItem("loggedInStatus", true);
         setLoggedIn(true);
-      } else {
+      } else if (
+        currentUser?.password === values?.password &&
+        currentUser?.admin === false
+      ) {
         localStorage.setItem("loggedInUser", true);
         localStorage.setItem("loggedInStatus", false);
         setLoggedIn(true);
+      } else {
+        setOpenSnackbar(true)
       }
     },
   });
@@ -79,6 +105,7 @@ function Login() {
     } else if (getUser === "true" && getStatus === "true") {
       navigate("/admin");
     }
+    users();
   }, [loggedIn]);
 
   return (
@@ -158,6 +185,17 @@ function Login() {
           </Box>
         </Box>
         <Copyright sx={{ mt: 8, mb: 4 }} />
+        <Snackbar
+        open={openSnackbar}
+        autoHideDuration={6000}
+        onClose={() => setOpenSnackbar(false)}>
+        <Alert
+          severity="error"
+          onClose={() => setOpenSnackbar(false)}
+          sx={{ width: "100%" }}>
+          Login Failed
+        </Alert>
+      </Snackbar>
       </Container>
     </>
   );

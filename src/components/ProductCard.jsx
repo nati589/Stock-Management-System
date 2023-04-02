@@ -15,7 +15,7 @@ import styled from "@emotion/styled";
 function ProductCard({ data, addToCart }) {
   const [info, showInfo] = useState(false);
   const MyCard = styled(Card)(({ theme }) => ({
-    // backgroundColor: theme.palette.grey[50],
+    backgroundColor: "rgba(170,170,170,0.3)",
   }))
   function toggleInfo() {
     showInfo(!info);

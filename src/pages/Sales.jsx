@@ -99,7 +99,7 @@ function Sales() {
         ...doc.data(),
         id: doc.id,
       }));
-      setUsers(filteredUsers);
+      setUsers(filteredUsers.filter(user => user.admin === false));
     } catch (error) {
       console.error("hi");
     }
