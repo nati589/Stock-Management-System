@@ -52,8 +52,8 @@
       {
         "fullscreen": false,
         "resizable": true,
-        "title": "tauri-demo",
-        "width": 800,
+        "title": "StockUp",
+        "width": 900,
         "height": 600
       }
     ]

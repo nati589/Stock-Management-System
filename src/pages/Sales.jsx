@@ -128,7 +128,7 @@ function Sales() {
 
   return (
     <Grid container spacing={1} sx={{ pl: 1, pr: 1 }}>
-      <Grid item xs={8} md={7} sx={{ maxHeight: "80vh", overflowY: "scroll" }}>
+      <Grid item xs={8} md={7} sx={{ maxHeight: "85vh", overflowY: "scroll" }}>
         <Box
           sx={{
             display: "flex",
