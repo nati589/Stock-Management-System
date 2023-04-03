@@ -37,7 +37,7 @@ const columns = [
     options: {
       filter: false,
     },
-  }, 
+  },
   {
     name: "ID",
     options: {
@@ -64,7 +64,7 @@ function CreditReport() {
     expandableRowsOnClick: true,
     renderExpandableRow: (rowData, rowMeta) => {
       const colSpan = rowData.length + 1;
-      const data = creditList.find((credit) => credit.id === rowData[4]).items;
+      const data = creditList.find((credit) => credit.id === rowData[4])?.items;
       return (
         <TableRow>
           <TableCell colSpan={colSpan}>
@@ -78,12 +78,12 @@ function CreditReport() {
                   </TableRow>
                 </TableHead>
                 <TableBody>
-                  {data.map((item, index) => (
+                  {data?.map((item, index) => (
                     <TableRow key={index}>
                       <TableCell component="th" scope="row">
                         {
                           productList.find((product) => product.id === item.id)
-                            .name
+                            ?.name
                         }
                       </TableCell>
                       <TableCell align="right">{item.quantity}</TableCell>

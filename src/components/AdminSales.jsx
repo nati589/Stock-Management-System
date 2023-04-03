@@ -87,7 +87,7 @@ function AdminSales() {
                   </TableRow>
                 </TableHead>
                 <TableBody>
-                  {data.map((item, index) => (
+                  {data?.map((item, index) => (
                     <TableRow key={index}>
                       <TableCell component="th" scope="row">
                         {
