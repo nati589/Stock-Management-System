@@ -23,6 +23,7 @@ const MyLink = styled(NavLink)(({ theme }) => ({
   textDecoration: "none",
 }));
 
+
 function AdminNavBar({ logout, mode }) {
   const navigate = useNavigate();
   const [anchorEl, setAnchorEl] = useState(null);
