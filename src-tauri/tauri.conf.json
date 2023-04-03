@@ -7,7 +7,7 @@
     "withGlobalTauri": false
   },
   "package": {
-    "productName": "tauri-demo",
+    "productName": "StockUp",
     "version": "0.0.0"
   },
   "tauri": {
