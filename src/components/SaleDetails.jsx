@@ -33,12 +33,7 @@ import {
   writeBatch,
 } from "firebase/firestore";
 
-function SaleDetails({
-  users,
-  cart,
-  removeCart,
-  handleSnackbarOpen,
-}) {
+function SaleDetails({ users, cart, removeCart, handleSnackbarOpen }) {
   const [subtotal, setSubtotal] = useState([]);
   const [subtotalvalue, setSubtotalvalue] = useState(0);
   const [credit, setCredit] = useState(false);
@@ -52,7 +47,7 @@ function SaleDetails({
     validationSchema: Yup.object({
       seller: Yup.string().required("Select a salesperson"),
       creditorName: Yup.string().required("Required field"),
-      creditDueDate: Yup.date().required("Required field"),
+      creditDueDate: Yup.date().required("Required field").min(new Date(), "Invalid date"),
     }),
     onSubmit: (values, { resetForm }) => {
       console.log(subtotal);
@@ -287,7 +282,6 @@ function SaleDetails({
                 label="Due Date"
                 name="creditDueDate"
                 type="date"
-                // autoComplete="email"
                 focused
               />
             </Box>
