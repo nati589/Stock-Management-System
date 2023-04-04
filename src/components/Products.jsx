@@ -11,7 +11,7 @@ function Products({ data, addToCart }) {
       // sx={{ bgcolor: '#f5f6fa' }}
     >
         {data.map((product, index) => (
-            <Grid item xs={4} sm={4} md={6} lg={3} key={index}>
+            <Grid item xs={4} sm={4} md={4} lg={3} key={index}>
                 <ProductCard data={product} addToCart={addToCart} />
             </Grid>
         ))}

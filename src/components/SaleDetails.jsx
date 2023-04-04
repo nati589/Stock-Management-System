@@ -155,7 +155,7 @@ function SaleDetails({ users, cart, removeCart, handleSnackbarOpen }) {
   };
 
   return (
-    <Card>
+    <Card variant="outlined" sx={{ borderRadius: 3, borderWidth: 1}}>
       <Typography variant="h6" sx={{ ml: 2 }}>
         Sale Details
       </Typography>

@@ -15,14 +15,14 @@ import styled from "@emotion/styled";
 function ProductCard({ data, addToCart }) {
   const [info, showInfo] = useState(false);
   const MyCard = styled(Card)(({ theme }) => ({
-    backgroundColor: "rgba(170,170,170,0.3)",
-  }))
+    backgroundColor: "rgba(180,180,180,0.3)",
+  }));
   function toggleInfo() {
     showInfo(!info);
   }
   return (
     <Box>
-      <MyCard variant="outlined" sx={{ borderRadius: 3, borderWidth: 3 }}>
+      <MyCard variant="outlined" sx={{ borderRadius: 2, borderWidth: 3 }}>
         <Box sx={{ display: "flex", justifyContent: "flex-end" }}>
           <IconButton onClick={toggleInfo} color="primary">
             {!info && <InfoOutlinedIcon />}
@@ -31,20 +31,18 @@ function ProductCard({ data, addToCart }) {
         </Box>
         <CardContent sx={{ minHeight: 130 }}>
           <Box>
-            {!info && <Typography align="center" noWrap>{data.name}</Typography>}
-            {!info && (
-                            <Typography align="center">Quantity: {data.quantity}</Typography>
-
-            )}
-            {info && <Typography align="center">{data.name}</Typography>}
-            {info && (
-              <Typography align="center">Quantity: {data.quantity}</Typography>
-            )}
+            <Typography align="center" variant="h6" color="primary" noWrap>
+              {data.name}
+            </Typography>
+            <Typography align="center">Quantity: {data.quantity}</Typography>
             {info && <Typography align="center">Unit: {data.unit}</Typography>}
           </Box>
         </CardContent>
         <CardActions sx={{ display: "flex", justifyContent: "center" }}>
-          <Button variant="outlined" onClick={() => addToCart(data)} disabled={data.quantity == 0}>
+          <Button
+            variant="outlined"
+            onClick={() => addToCart(data)}
+            disabled={data.quantity == 0}>
             ADD
           </Button>
         </CardActions>

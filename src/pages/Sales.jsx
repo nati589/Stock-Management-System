@@ -8,10 +8,7 @@ import React, { useEffect, useState } from "react";
 import Categories from "../components/Categories";
 import Products from "../components/Products";
 import { db } from "../config/firebase";
-import {
-  getDocs,
-  collection,
-} from "firebase/firestore";
+import { getDocs, collection } from "firebase/firestore";
 import SaleDetails from "../components/SaleDetails";
 
 const Search = styled("div")(({ theme }) => ({
@@ -99,7 +96,7 @@ function Sales() {
         ...doc.data(),
         id: doc.id,
       }));
-      setUsers(filteredUsers.filter(user => user.admin === false));
+      setUsers(filteredUsers.filter((user) => user.admin === false));
     } catch (error) {
       console.error("hi");
     }
@@ -128,7 +125,7 @@ function Sales() {
 
   return (
     <Grid container spacing={1} sx={{ pl: 1, pr: 1 }}>
-      <Grid item xs={8} md={7} sx={{ maxHeight: "85vh", overflowY: "scroll" }}>
+      <Grid item xs={8} md={7}>
         <Box
           sx={{
             display: "flex",
@@ -150,18 +147,20 @@ function Sales() {
             />
           </Search>
         </Box>
-        <Products
-          data={
-            searchData === ""
-              ? sortedProducts
-              : sortedProducts.filter((sortedProduct) =>
-                  sortedProduct.name
-                    .toLowerCase()
-                    .includes(searchData.toLowerCase())
-                )
-          }
-          addToCart={addToCart}
-        />
+        <Box sx={{ maxHeight: "70vh", overflowY: "scroll" }}>
+          <Products
+            data={
+              searchData === ""
+                ? sortedProducts
+                : sortedProducts.filter((sortedProduct) =>
+                    sortedProduct.name
+                      .toLowerCase()
+                      .includes(searchData.toLowerCase())
+                  )
+            }
+            addToCart={addToCart}
+          />
+        </Box>
       </Grid>
       <Grid item xs={4} md={5} sx={{ maxHeight: "80vh" }}>
         <SaleDetails
