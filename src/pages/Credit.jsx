@@ -187,6 +187,7 @@ function Credit() {
                     <TableCell>Item</TableCell>
                     <TableCell align="right">Quantity</TableCell>
                     <TableCell align="right">Price</TableCell>
+                    <TableCell align="right">Total</TableCell>
                   </TableRow>
                 </TableHead>
                 <TableBody>
@@ -200,6 +201,7 @@ function Credit() {
                       </TableCell>
                       <TableCell align="right">{item.quantity}</TableCell>
                       <TableCell align="right">{item.price}</TableCell>
+                      <TableCell align="right">{item.price * item.quantity}</TableCell>
                     </TableRow>
                   ))}
                 </TableBody>

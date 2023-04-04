@@ -115,7 +115,7 @@ function NavBar({ mode }) {
           <ListItemIcon>
             <NightlightIcon fontSize="small" />
           </ListItemIcon>
-          Dark Mode
+          Theme
         </MenuItem>
         <MenuItem
           onClick={() => {

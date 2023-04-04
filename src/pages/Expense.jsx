@@ -60,8 +60,8 @@ function Expense() {
                   label="Expense Type"
                   value={category}
                   onChange={handleChange}>
-                  <MenuItem value={"Labour"}>Labour</MenuItem>
-                  <MenuItem value={"Delivery"}>Delivery</MenuItem>
+                  <MenuItem value={"Labour"}>Loading</MenuItem>
+                  <MenuItem value={"Delivery"}>Transport</MenuItem>
                 </Select>
               </FormControl>
             </Box>

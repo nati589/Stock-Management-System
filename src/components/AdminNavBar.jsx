@@ -23,7 +23,6 @@ const MyLink = styled(NavLink)(({ theme }) => ({
   textDecoration: "none",
 }));
 
-
 function AdminNavBar({ logout, mode }) {
   const navigate = useNavigate();
   const [anchorEl, setAnchorEl] = useState(null);
@@ -71,7 +70,7 @@ function AdminNavBar({ logout, mode }) {
                 aria-controls={open ? "account-menu" : undefined}
                 aria-haspopup="true"
                 aria-expanded={open ? "true" : undefined}>
-                <Avatar sx={{ width: 32, height: 32 }}>M</Avatar>
+                <Avatar sx={{ width: 32, height: 32 }}></Avatar>
               </IconButton>
             </Tooltip>
           </Stack>
@@ -119,7 +118,7 @@ function AdminNavBar({ logout, mode }) {
           <ListItemIcon>
             <NightlightIcon fontSize="small" />
           </ListItemIcon>
-          Dark Mode
+          Theme
         </MenuItem>
         <MenuItem
           onClick={() => {

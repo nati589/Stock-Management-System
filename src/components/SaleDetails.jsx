@@ -195,14 +195,17 @@ function SaleDetails({
         <Divider />
         <CardContent>
           <Grid container sx={{ mb: 2 }}>
-            <Grid item md={4}>
+            <Grid item md={3}>
               Item
             </Grid>
-            <Grid item md={6}>
+            <Grid item md={5}>
               <Typography>Quantity</Typography>
             </Grid>
             <Grid item md={2}>
               Unit Price
+            </Grid>
+            <Grid item md={2}>
+              Item Total
             </Grid>
           </Grid>
           <Divider />

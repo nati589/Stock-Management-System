@@ -72,17 +72,17 @@ function Stock() {
       }
     },     
     {
-      name: "Quantity",
-      options: {
-        filter: false,
-      }
-    },     
-    {
       name: "Unit",
       options: {
         filter: false,
       }
     }, 
+    {
+      name: "Quantity",
+      options: {
+        filter: false,
+      }
+    },     
     {
       name: "Unit Price",
       options: {
@@ -144,8 +144,8 @@ function Stock() {
       filteredProducts.map((product) => {
         return [
           product.name,
-          product.quantity,
           product.unit,
+          product.quantity,
           product.price_bought,
           product.id,
           product.date_added,
