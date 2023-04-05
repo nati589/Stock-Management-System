@@ -55,12 +55,10 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
 function Sales() {
   const productsRef = collection(db, "products");
   const categoryRef = collection(db, "categories");
-  const userRef = collection(db, "users");
   const [products, setProducts] = useState([]);
   const [sortedProducts, setSortedProducts] = useState([]);
   const [searchData, setSearchData] = useState("");
   const [categories, setCategories] = useState([]);
-  const [users, setUsers] = useState([]);
   const [openSnackbar, setOpenSnackbar] = useState(false);
 
   const getProducts = async () => {
@@ -89,22 +87,9 @@ function Sales() {
       console.error("hi");
     }
   };
-  const getUsers = async () => {
-    try {
-      const userData = await getDocs(userRef);
-      const filteredUsers = userData.docs.map((doc) => ({
-        ...doc.data(),
-        id: doc.id,
-      }));
-      setUsers(filteredUsers.filter((user) => user.admin === false));
-    } catch (error) {
-      console.error("hi");
-    }
-  };
   useEffect(() => {
     getProducts();
     getCategories();
-    getUsers();
   }, []);
   const [cart, setCart] = useState([]);
   const addToCart = (product) => {
@@ -147,7 +132,7 @@ function Sales() {
             />
           </Search>
         </Box>
-        <Box sx={{ maxHeight: "70vh", overflowY: "scroll", pl: 2, pr: 2 }}>
+        <Box sx={{ maxHeight: "75vh", overflowY: "scroll", pl: 2, pr: 2 }}>
           <Products
             data={
               searchData === ""
@@ -164,7 +149,6 @@ function Sales() {
       </Grid>
       <Grid item xs={4} md={5} sx={{ maxHeight: "80vh" }}>
         <SaleDetails
-          users={users}
           cart={cart}
           removeCart={removeCart}
           handleSnackbarOpen={setOpenSnackbar}

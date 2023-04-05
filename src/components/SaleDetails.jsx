@@ -33,14 +33,15 @@ import {
   writeBatch,
 } from "firebase/firestore";
 
-function SaleDetails({ users, cart, removeCart, handleSnackbarOpen }) {
+function SaleDetails({ cart, removeCart, handleSnackbarOpen }) {
   const [subtotal, setSubtotal] = useState([]);
   const [subtotalvalue, setSubtotalvalue] = useState(0);
   const [credit, setCredit] = useState(false);
-
+  const seller = localStorage.getItem("fullName")
+  console.log(seller)
   const formik = useFormik({
     initialValues: {
-      seller: "",
+      seller: seller,
       creditorName: "",
       creditDueDate: "",
     },
@@ -98,7 +99,7 @@ function SaleDetails({ users, cart, removeCart, handleSnackbarOpen }) {
   });
   const formik2 = useFormik({
     initialValues: {
-      seller: "",
+      seller: seller,
     },
     validationSchema: Yup.object({
       seller: Yup.string().required("Select a salesperson"),
@@ -178,13 +179,10 @@ function SaleDetails({ users, cart, removeCart, handleSnackbarOpen }) {
                 ? Boolean(formik.errors.seller) && formik.touched.seller
                 : Boolean(formik2.errors.seller) && formik2.touched.seller
             }
-            // helperText={formik.touched.seller && formik.errors.seller}
             sx={{ height: 1 }}>
-            {users.map((user, index) => (
-              <MenuItem value={user.fullname} key={index}>
-                {user.fullname}
+              <MenuItem value={formik.values.seller}>
+                {formik.values.seller}
               </MenuItem>
-            ))}
           </Select>
         </FormControl>
         <Divider />

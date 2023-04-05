@@ -11,38 +11,55 @@ import {
   TextField,
   Typography,
 } from "@mui/material";
-// import AddIcon from '@mui/icons-material/Add';
 import { Box } from "@mui/system";
 import React, { useState } from "react";
 import { db } from "../config/firebase";
 import { collection, addDoc } from "firebase/firestore";
+import { useFormik } from "formik";
+import * as Yup from "yup";
 
 function Expense() {
-  const [category, setCategory] = useState("");
   const [openSnackbar, setOpenSnackbar] = useState(false);
-  const [price, setPrice] = useState("");
-  const [verification, setVerification] = useState('');
   const expenseRef = collection(db, "expenses");
 
-  const handleChange = (event) => {
-    setCategory(event.target.value);
-  };
-  const handleSubmit = async (event) => {
-    event.preventDefault();
+  const formik = useFormik({
+    initialValues: {
+      type: "",
+      phoneNumber: "",
+      verification: "",
+      price: "",
+    },
+    validationSchema: Yup.object({
+      type: Yup.string().required("Required field"),
+      verification: Yup.string().required("Required field"),
+      price: Yup.number().required("Required field"),
+      phoneNumber: Yup.string()
+        .required("Required field")
+        .min(8, "Must be at least 8 digits"),
+    }),
+    onSubmit: (values, { resetForm }) => {
+      addExpense(values);
+      resetForm({ values: "" });
+    },
+  });
+
+  const addExpense = async (values) => {
     let date = new Date();
     let myDate = `${
       date.getMonth() + 1
     }/${date.getDate()}/${date.getFullYear()}`;
 
     try {
-      await addDoc(expenseRef, { type: category, date_added: myDate, price, verification })
-      .then(() => setOpenSnackbar(true));
+      await addDoc(expenseRef, {
+        type: values.type,
+        date_added: myDate,
+        price: values.price,
+        verification: values.verification,
+        phoneNumber: values.phoneNumber,
+      }).then(() => setOpenSnackbar(true));
     } catch (err) {
       console.error(err);
     }
-    setCategory("");
-    setPrice("");
-    setVerification("");
   };
 
   return (
@@ -50,18 +67,20 @@ function Expense() {
       <Typography variant="h4">Expense</Typography>
       <Grid item xs={12}>
         <Card elevation={0}>
-          <Box component="form" onSubmit={handleSubmit}>
+          <Box component="form" onSubmit={formik.handleSubmit}>
             <Box sx={{ display: "flex", mt: 2, mb: 1 }}>
               <FormControl fullWidth>
                 <InputLabel id="expense">Type of Expense</InputLabel>
                 <Select
                   labelId="expense"
-                  id="expenseid"
+                  id="type"
                   label="Expense Type"
-                  value={category}
-                  onChange={handleChange}>
-                  <MenuItem value={"Labour"}>Loading</MenuItem>
-                  <MenuItem value={"Delivery"}>Transport</MenuItem>
+                  name="type"
+                  value={formik.values.type}
+                  onChange={formik.handleChange}
+                  error={Boolean(formik.errors.type) && formik.touched.type}>
+                  <MenuItem value={"Loading"}>Loading</MenuItem>
+                  <MenuItem value={"Transport"}>Transport</MenuItem>
                 </Select>
               </FormControl>
             </Box>
@@ -70,12 +89,14 @@ function Expense() {
                 margin="normal"
                 required
                 fullWidth
-                type='number'
+                type="number"
                 id="price"
                 label="Price"
                 name="price"
-                value={price}
-                onChange={(event) => setPrice(event.target.value)}
+                value={formik.values.price}
+                onChange={formik.handleChange}
+                error={Boolean(formik.errors.price) && formik.touched.price}
+                helperText={formik.touched.price && formik.errors.price}
                 sx={{ mr: 2 }}
               />
               <TextField
@@ -84,14 +105,41 @@ function Expense() {
                 fullWidth
                 id="verification"
                 label="Verificaion"
-                value={verification}
-                onChange={(event) => setVerification(event.target.value)}
+                value={formik.values.verification}
+                onChange={formik.handleChange}
+                error={
+                  Boolean(formik.errors.verification) &&
+                  formik.touched.verification
+                }
+                helperText={
+                  formik.touched.verification && formik.errors.verification
+                }
                 name="verification"
               />
             </Box>
+            <TextField
+              margin="normal"
+              required
+              fullWidth
+              id="phoneNumber"
+              label="Phone Number"
+              name="phoneNumber"
+              value={formik.values.phoneNumber}
+              onChange={formik.handleChange}
+              error={
+                Boolean(formik.errors.phoneNumber) && formik.touched.phoneNumber
+              }
+              helperText={
+                formik.touched.phoneNumber && formik.errors.phoneNumber
+              }
+              sx={{ mr: 2 }}
+            />
 
             <Box sx={{ display: "flex", justifyContent: "flex-end", mt: 2 }}>
-              <Button variant="filled" type="cancel">
+              <Button
+                variant="filled"
+                type="reset"
+                onClick={() => formik.resetForm()}>
                 Cancel
               </Button>
               <Button variant="contained" type="submit" sx={{ ml: 2 }}>

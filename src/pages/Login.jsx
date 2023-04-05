@@ -90,6 +90,7 @@ function Login() {
       ) {
         localStorage.setItem("loggedInUser", true);
         localStorage.setItem("loggedInStatus", false);
+        localStorage.setItem("fullName", currentUser?.fullname)
         setLoggedIn(true);
       } else {
         setOpenSnackbar(true)

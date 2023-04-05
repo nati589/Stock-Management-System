@@ -28,19 +28,17 @@ function AddProduct() {
   const [openSnackbar, setOpenSnackbar] = useState(false);
   const [category, setCategory] = useState("");
   const [product, setProduct] = useState("");
-  const [addedBy, setAddedBy] = useState("");
+  const addedBy = localStorage.getItem("fullName");
   const [unit, setUnit] = useState("");
   const [quantity, setQuantity] = useState("");
   const priceBought = 0;
 
   const [productList, setProductList] = useState([]);
   const [categoryList, setCategoryList] = useState([]);
-  const [userList, setUserList] = useState([]);
   const [newProduct, setNewProduct] = useState(false);
   const [newCategory, setNewCategory] = useState(false);
   const productsRef = collection(db, "products");
   const categoryRef = collection(db, "categories");
-  const usersRef = collection(db, "users");
 
   const getDetails = async () => {
     try {
@@ -57,14 +55,6 @@ function AddProduct() {
         id: doc.id,
       }));
       setCategoryList(filteredCategories);
-
-      const userData = await getDocs(usersRef);
-      const filteredUsers = userData.docs.map((doc) => ({
-        ...doc.data(),
-        id: doc.id,
-      }));
-      setUserList(filteredUsers.filter(user => user.admin === false));
-      // console.log(filteredUsers);
     } catch (error) {
       console.error(error);
     }
@@ -77,11 +67,17 @@ function AddProduct() {
     event.preventDefault();
     if (!newProduct) {
       try {
+        let date = new Date();
+        let myDate = `${
+          date.getMonth() + 1
+        }/${date.getDate()}/${date.getFullYear()}`;
         let productId = productList.find((item) => item.name === product);
         const productDoc = doc(db, "products", productId.id);
         console.log(quantity, productId.quantity);
         await updateDoc(productDoc, {
           quantity: Number(quantity) + Number(productId.quantity),
+          date_added: myDate,
+          added_by: addedBy,
         }).then(() => setOpenSnackbar(true));
         getDetails();
       } catch (error) {
@@ -111,7 +107,6 @@ function AddProduct() {
     }
     setCategory("");
     setProduct("");
-    setAddedBy("");
     setUnit("");
     setQuantity("");
     setNewProduct(false);
@@ -233,12 +228,10 @@ function AddProduct() {
                   id="addedby"
                   label="AddedBy"
                   value={addedBy}
-                  onChange={(event) => setAddedBy(event.target.value)}>
-                  {userList.map((item, index) => (
-                    <MenuItem value={item.fullname} key={index}>
-                      {item.fullname}
+                  >
+                    <MenuItem value={addedBy}>
+                      {addedBy}
                     </MenuItem>
-                  ))}
                 </Select>
               </FormControl>
             )}
