@@ -34,33 +34,33 @@ function AdminNavBar({ logout, mode }) {
     setAnchorEl(null);
   };
   return (
-    <AppBar position="static" color="" sx={{ mb: 5 }}>
+    <AppBar position="static" color="primary" sx={{ mb: 5 }}>
       <Toolbar sx={{ display: "flex", justifyContent: "space-between" }}>
         <Typography
           variant="h6"
           noWrap
           fontWeight="bold"
           component="div"
-          color="primary"
+          color=""
           sx={{ display: { xs: "none", sm: "block" } }}>
           StockUp
         </Typography>
         <Box>
           <Stack direction="row" spacing={3}>
             <MyLink to="/admin/">
-              <Button>Sales</Button>
+              <Button sx={{ color: '#fff'}}>Sales</Button>
             </MyLink>
             <MyLink to="/admin/stock">
-              <Button>Stock</Button>
+              <Button sx={{ color: '#fff'}}>Stock</Button>
             </MyLink>
             <MyLink to="/admin/creditreport">
-              <Button>Credit</Button>
+              <Button sx={{ color: '#fff'}}>Credit</Button>
             </MyLink>
             <MyLink to="/admin/expensereport">
-              <Button>Expense</Button>
+              <Button sx={{ color: '#fff'}}>Expense</Button>
             </MyLink>
             <MyLink to="/admin/adduser">
-              <Button>New User</Button>
+              <Button sx={{ color: '#fff'}}>New User</Button>
             </MyLink>
             <Tooltip title="Account settings">
               <IconButton

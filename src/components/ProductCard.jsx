@@ -29,7 +29,7 @@ function ProductCard({ data, addToCart }) {
             {info && <InfoIcon />}
           </IconButton>
         </Box>
-        <CardContent sx={{ minHeight: 130 }}>
+        <CardContent sx={{ minHeight: 120 }}>
           <Box>
             <Typography align="center" variant="h6" color="primary" noWrap>
               {data.name}

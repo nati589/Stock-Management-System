@@ -99,7 +99,7 @@ function AddProduct() {
           price_bought: priceBought,
           date_added: myDate,
           added_by: addedBy,
-          quantity,
+          quantity: Number(quantity),
           unit,
         }).then(() => setOpenSnackbar(true));
         if (categoryList.find((item) => item.name === category) === undefined) {

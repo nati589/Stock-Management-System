@@ -21,7 +21,10 @@ function CartItem({ cardData, index, handleSubtotal }) {
   return (
     <Grid container sx={{ mt: 1 }}>
       <Grid item md={3} sx={{ display: "flex", alignItems: "center" }}>
+        <Typography fontSize={15} noWrap>
+
         {cardData.name}
+        </Typography>
       </Grid>
       <Grid item md={5}>
         <Box sx={{ display: "flex", alignItems: "center" }}>
@@ -114,7 +117,7 @@ function CartItem({ cardData, index, handleSubtotal }) {
         />
       </Grid>
       <Grid item md={2} sx={{ display: "flex", alignItems: "center" }}>
-        <Typography align="right" sx={{ ml: 2 }}>
+        <Typography align="right" sx={{ ml: 2 }} fontSize="small">
           {quantity && price ? (quantity * price).toFixed(2) : 0}
         </Typography>
       </Grid>

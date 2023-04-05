@@ -147,7 +147,7 @@ function Sales() {
             />
           </Search>
         </Box>
-        <Box sx={{ maxHeight: "70vh", overflowY: "scroll" }}>
+        <Box sx={{ maxHeight: "70vh", overflowY: "scroll", pl: 2, pr: 2 }}>
           <Products
             data={
               searchData === ""
