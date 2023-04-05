@@ -33,12 +33,11 @@ import {
   writeBatch,
 } from "firebase/firestore";
 
-function SaleDetails({ cart, removeCart, handleSnackbarOpen }) {
+function SaleDetails({ cart, removeCart, handleSnackbarOpen, removeCartItem }) {
   const [subtotal, setSubtotal] = useState([]);
   const [subtotalvalue, setSubtotalvalue] = useState(0);
   const [credit, setCredit] = useState(false);
   const seller = localStorage.getItem("fullName")
-  console.log(seller)
   const formik = useFormik({
     initialValues: {
       seller: seller,
@@ -155,6 +154,13 @@ function SaleDetails({ cart, removeCart, handleSnackbarOpen }) {
     setSubtotalvalue(sum);
   };
 
+  const removeItem = (index) => {
+    // let x = subtotal
+    // x.pop(index)
+    // setSubtotal(x)
+    removeCartItem(index)
+  }
+
   return (
     <Card variant="outlined" sx={{ borderRadius: 3, borderWidth: 1}}>
       <Typography variant="h6" sx={{ ml: 2 }}>
@@ -209,6 +215,7 @@ function SaleDetails({ cart, removeCart, handleSnackbarOpen }) {
                   cardData={item}
                   index={index}
                   handleSubtotal={handleSubtotal}
+                  removeItem={removeItem}
                 />
                 {/* <Divider /> */}
               </Box>

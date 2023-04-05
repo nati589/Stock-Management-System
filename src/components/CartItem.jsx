@@ -1,10 +1,10 @@
-import { Grid, IconButton, TextField, Typography } from "@mui/material";
+import { Button, Grid, IconButton, TextField, Typography } from "@mui/material";
 import { useEffect, useState } from "react";
 import RemoveOutlinedIcon from "@mui/icons-material/RemoveOutlined";
 import AddOutlinedIcon from "@mui/icons-material/AddOutlined";
 import { Box } from "@mui/system";
 
-function CartItem({ cardData, index, handleSubtotal }) {
+function CartItem({ cardData, index, handleSubtotal, removeItem }) {
   const [quantity, setQuantity] = useState(0);
   const [price, setPrice] = useState(0);
   const [quantityError, setQuantityError] = useState(false);
@@ -22,8 +22,11 @@ function CartItem({ cardData, index, handleSubtotal }) {
     <Grid container sx={{ mt: 1 }}>
       <Grid item md={3} sx={{ display: "flex", alignItems: "center" }}>
         <Typography fontSize={15} noWrap>
-
+          <Button onClick={() => {
+            removeItem(index)
+          }}>
         {cardData.name}
+          </Button>
         </Typography>
       </Grid>
       <Grid item md={5}>

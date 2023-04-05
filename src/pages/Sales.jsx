@@ -100,6 +100,12 @@ function Sales() {
   const removeCart = () => {
     setCart([]);
   };
+  const removeCartItem = (index) => {
+    // let x = cart
+    // x.pop(index)
+    console.log(index)
+    // setCart(x)
+  } 
   const handleSort = (event) => {
     if (event === "All") {
       setSortedProducts(products);
@@ -152,6 +158,7 @@ function Sales() {
           cart={cart}
           removeCart={removeCart}
           handleSnackbarOpen={setOpenSnackbar}
+          removeCartItem={removeCartItem}
         />
       </Grid>
       <Snackbar

@@ -92,7 +92,7 @@ function AddProduct() {
         await addDoc(productsRef, {
           name: product,
           category,
-          price_bought: priceBought,
+          price_bought: Number(priceBought),
           date_added: myDate,
           added_by: addedBy,
           quantity: Number(quantity),
