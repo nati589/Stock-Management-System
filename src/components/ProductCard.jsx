@@ -34,8 +34,14 @@ function ProductCard({ data, addToCart }) {
             <Typography align="center" variant="h6" color="primary" noWrap>
               {data.name}
             </Typography>
-            <Typography align="center" fontSize={10} sx={{ mt: 1}}>Quantity: {data.quantity}</Typography>
-            {info && <Typography align="center" fontSize={10}>Unit: {data.unit}</Typography>}
+            <Typography align="center" fontSize={12} sx={{ mt: 1 }}>
+              Quantity: {data.quantity}
+            </Typography>
+            {info && (
+              <Typography align="center" fontSize={10}>
+                Unit: {data.unit}
+              </Typography>
+            )}
           </Box>
         </CardContent>
         <CardActions sx={{ display: "flex", justifyContent: "center" }}>

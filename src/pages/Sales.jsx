@@ -100,11 +100,10 @@ function Sales() {
   const removeCart = () => {
     setCart([]);
   };
-  const removeCartItem = (index) => {
-    // let x = cart
-    // x.pop(index)
-    console.log(index)
-    // setCart(x)
+  const removeCartItem = (id) => {
+    setCart(prev => {
+      return prev.filter((item) => item.id != id)
+    })
   } 
   const handleSort = (event) => {
     if (event === "All") {
