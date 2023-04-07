@@ -111,9 +111,11 @@ function SaleDetails({ cart, removeCart, handleSnackbarOpen, removeCartItem }) {
   const formik2 = useFormik({
     initialValues: {
       seller: seller,
+      buyer: "",
     },
     validationSchema: Yup.object({
       seller: Yup.string().required("Select a salesperson"),
+      buyer: Yup.string(),
     }),
     onSubmit: (values, { resetForm }) => {
       console.log(subtotal);
@@ -141,6 +143,7 @@ function SaleDetails({ cart, removeCart, handleSnackbarOpen, removeCartItem }) {
             }),
             total: subtotalvalue,
             seller: values.seller,
+            buyer: values.buyer,
             date_sold: myDate,
           }).then(() => handleSnackbarOpen(true));
         } catch (error) {
@@ -233,7 +236,7 @@ function SaleDetails({ cart, removeCart, handleSnackbarOpen, removeCartItem }) {
             </Grid>
           </Grid>
           <Divider />
-          <Box sx={{ maxHeight: "30vh", overflowY: "scroll", mb: 1 }}>
+          <Box sx={{ maxHeight: 150, overflowY: "scroll", mb: 1 }}>
             {cart.map((item, index) => (
               <Box key={index}>
                 <CartItem
@@ -318,6 +321,29 @@ function SaleDetails({ cart, removeCart, handleSnackbarOpen, removeCartItem }) {
                 name="creditDueDate"
                 type="date"
                 focused
+              />
+            </Box>
+          )}
+          {!credit && (
+            <Box>
+              <TextField
+                margin="normal"
+                fullWidth
+                value={formik2.values.buyer}
+                onChange={formik2.handleChange}
+                error={
+                  Boolean(formik2.errors.buyer) &&
+                  formik2.touched.buyer
+                }
+                helperText={
+                  formik2.touched.buyer && formik2.errors.buyer
+                }
+                size="small"
+                id="buyer"
+                label="Buyer Name"
+                name="buyer"
+                // autoComplete="email"
+                autoFocus
               />
             </Box>
           )}
