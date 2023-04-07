@@ -1,6 +1,4 @@
-import { 
-    Grid, Typography, 
-} from "@mui/material";
+import { Grid, Typography } from "@mui/material";
 import { styled } from "@mui/system";
 import MUIDataTable from "mui-datatables";
 import { useEffect, useState } from "react";
@@ -11,25 +9,46 @@ const StyledMUIDataTable = styled(MUIDataTable)(({ theme }) => ({
   background: theme.palette.background.default,
 }));
 const columns = [
-  "Type", 
+  "Type",
   {
-    name: "Verification", 
+    name: "Verification",
     options: {
       filter: false,
     },
-  }, 
+  },
   {
-    name: "Payment", 
+    name: "Payment",
     options: {
       filter: false,
     },
-  }, 
+  },
   {
-    name: "Date", 
+    name: "Date",
     options: {
       filter: false,
     },
-  },   
+  },
+  {
+    name: "DAY",
+    options: {
+      filter: true,
+      display: false,
+    },
+  },
+  {
+    name: "MONTH",
+    options: {
+      filter: true,
+      display: false,
+    },
+  },
+  {
+    name: "YEAR",
+    options: {
+      filter: true,
+      display: false,
+    },
+  },
 ];
 const options = {
   // filterType: "checkbox",
@@ -38,7 +57,7 @@ const options = {
 };
 
 function ExpenseReport() {
-  const [expenseList, setExpenseList] = useState([])
+  const [expenseList, setExpenseList] = useState([]);
   const expenseRef = collection(db, "expenses");
 
   const getDetails = async () => {
@@ -48,21 +67,27 @@ function ExpenseReport() {
         ...doc.data(),
         id: doc.id,
       }));
-      setExpenseList(filteredExpenses.map((expense) => {
-        return [
-          expense.type,
-          expense.verification,
-          expense.price,
-          expense.date_added,
-        ]
-      }));
+      setExpenseList(
+        filteredExpenses.map((expense) => {
+          let [month, day, year] = expense.date_added.split("/");
+          return [
+            expense.type,
+            expense.verification,
+            expense.price,
+            expense.date_added,
+            day,
+            month,
+            year,
+          ];
+        })
+      );
     } catch (error) {
       console.error(error);
     }
-  }
+  };
   useEffect(() => {
     getDetails();
-  }, [])
+  }, []);
   return (
     <Grid container spacing={1} sx={{ pl: 1, pr: 1 }}>
       <Grid
@@ -72,9 +97,9 @@ function ExpenseReport() {
         sx={{
           pr: 1,
         }}>
-        <Typography variant="h4" sx={{ mb: 2}}>
+        <Typography variant="h4" sx={{ mb: 2 }}>
           Expense Report
-      </Typography>
+        </Typography>
         <StyledMUIDataTable
           title={"Expenses"}
           data={expenseList}
@@ -83,7 +108,7 @@ function ExpenseReport() {
         />
       </Grid>
     </Grid>
-  )
+  );
 }
 
-export default ExpenseReport
+export default ExpenseReport;

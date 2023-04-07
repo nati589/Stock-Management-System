@@ -1,4 +1,13 @@
-import { Alert, Box, Button, Grid, Modal, Snackbar, TextField, Typography } from "@mui/material";
+import {
+  Alert,
+  Box,
+  Button,
+  Grid,
+  Modal,
+  Snackbar,
+  TextField,
+  Typography,
+} from "@mui/material";
 import { styled } from "@mui/system";
 import MUIDataTable from "mui-datatables";
 import { useEffect, useState } from "react";
@@ -36,8 +45,9 @@ function Stock() {
     } else {
       try {
         const productDoc = doc(db, "products", data.id);
-        await updateDoc(productDoc, { price_bought: price })
-        .then(() => setOpenSnackbar(true))
+        await updateDoc(productDoc, { price_bought: price }).then(() =>
+          setOpenSnackbar(true)
+        );
         getDetails();
       } catch (error) {
         console.error(error);
@@ -69,40 +79,61 @@ function Stock() {
       name: "Products",
       options: {
         filter: false,
-      }
-    },     
+      },
+    },
     {
       name: "Unit",
       options: {
         filter: false,
-      }
-    }, 
+      },
+    },
     {
       name: "Quantity",
       options: {
         filter: false,
-      }
-    },     
+      },
+    },
     {
       name: "Unit Price",
       options: {
         filter: false,
-      }
-    }, 
+      },
+    },
     {
       name: "ID",
       options: {
         display: false,
         filter: false,
         sort: false,
-      }
+      },
+    },
+    {
+      name: "DAY",
+      options: {
+        display: false,
+        filter: true,
+      },
+    },
+    {
+      name: "MONTH",
+      options: {
+        display: false,
+        filter: true,
+      },
+    },
+    {
+      name: "YEAR",
+      options: {
+        display: false,
+        filter: true,
+      },
     },
     {
       name: "Date Added",
       options: {
         filter: false,
-      }
-    }, 
+      },
+    },
     "Category",
     {
       label: "ACTION",
@@ -142,12 +173,16 @@ function Stock() {
     }));
     setProductList(
       filteredProducts.map((product) => {
+        let [month, day, year] = product.date_added.split("/");
         return [
           product.name,
           product.unit,
           product.quantity,
           product.price_bought,
           product.id,
+          day,
+          month,
+          year,
           product.date_added,
           product.category,
           product.added_by,

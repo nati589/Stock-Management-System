@@ -15,6 +15,11 @@ import {
   Radio,
   RadioGroup,
   Select,
+  Table,
+  TableCell,
+  TableRow,
+  TableBody,
+  TableHead,
   TextField,
   Typography,
 } from "@mui/material";
@@ -38,6 +43,7 @@ function SaleDetails({ cart, removeCart, handleSnackbarOpen, removeCartItem }) {
   const [subtotalvalue, setSubtotalvalue] = useState(0);
   const [credit, setCredit] = useState(false);
   const seller = localStorage.getItem("fullName");
+  const [open, setOpen] = useState(false);
 
   useEffect(() => {
     setSubtotalvalue(
@@ -188,6 +194,24 @@ function SaleDetails({ cart, removeCart, handleSnackbarOpen, removeCartItem }) {
       return prev.filter((item) => item.id != id);
     });
   };
+  const handleBackdropClick = (event) => {
+    //these fail to keep the modal open
+    event.stopPropagation();
+    return false;
+  };
+  const style = {
+    position: "absolute",
+    top: "50%",
+    left: "50%",
+    transform: "translate(-50%, -50%)",
+    width: 600,
+    height: 500,
+    overflowY: "scroll",
+    bgcolor: "background.paper",
+    border: "2px solid #000",
+    boxShadow: 24,
+    p: 4,
+  };
 
   return (
     <Card variant="outlined" sx={{ borderRadius: 3, borderWidth: 1 }}>
@@ -331,13 +355,8 @@ function SaleDetails({ cart, removeCart, handleSnackbarOpen, removeCartItem }) {
                 fullWidth
                 value={formik2.values.buyer}
                 onChange={formik2.handleChange}
-                error={
-                  Boolean(formik2.errors.buyer) &&
-                  formik2.touched.buyer
-                }
-                helperText={
-                  formik2.touched.buyer && formik2.errors.buyer
-                }
+                error={Boolean(formik2.errors.buyer) && formik2.touched.buyer}
+                helperText={formik2.touched.buyer && formik2.errors.buyer}
                 size="small"
                 id="buyer"
                 label="Buyer Name"
@@ -394,7 +413,8 @@ function SaleDetails({ cart, removeCart, handleSnackbarOpen, removeCartItem }) {
               Cancel
             </Button>
             <Button
-              type="submit"
+              // type="submit"
+              onClick={() => setOpen(true)}
               variant="contained"
               disabled={cart.length === 0}
               fullWidth>
@@ -402,6 +422,93 @@ function SaleDetails({ cart, removeCart, handleSnackbarOpen, removeCartItem }) {
             </Button>
           </Box>
         </CardActions>
+        <Modal
+          open={open}
+          onClose={() => setOpen(false)}
+          onBackdropClick={handleBackdropClick}
+          disableEscapeKeyDown
+          aria-labelledby="modal-modal-title"
+          aria-describedby="modal-modal-description">
+          <Box sx={style}>
+            <Typography id="modal-modal-title" variant="h6" component="h2">
+              Sale Information
+            </Typography>
+            <Typography id="modal-modal-description" sx={{ mt: 2 }}>
+              Salesperson: {formik.values.seller}
+            </Typography>
+            <Typography id="modal-modal-description" sx={{ mt: 2 }}>
+              Name: {credit ? formik.values.creditorName : formik2.values.buyer}
+            </Typography>
+            <Typography id="modal-modal-description" sx={{ mt: 2, mb: 1 }}>
+              Items
+            </Typography>
+            <Table size="small">
+              <TableHead sx={{ mb: 2 }}>
+                <TableRow>
+                  <TableCell>Item</TableCell>
+                  <TableCell align="right">Quantity</TableCell>
+                  <TableCell align="right">Price</TableCell>
+                  <TableCell align="right">Total</TableCell>
+                </TableRow>
+              </TableHead>
+              <TableBody>
+                  {cart?.map((item, index) => (
+                    <TableRow key={index}>
+                      <TableCell component="th" scope="row">
+                        {item.name}
+                      </TableCell>
+                      <TableCell align="right">
+                        {
+                          subtotal.find((product) => product.id === item.id)
+                            ?.quantity
+                        }
+                      </TableCell>
+                      <TableCell align="right">
+                        {
+                          subtotal.find((product) => product.id === item.id)
+                            ?.price
+                        }
+                      </TableCell>
+                      <TableCell align="right">
+                        {subtotal.find((product) => product.id === item.id)
+                          ?.price *
+                          subtotal.find((product) => product.id === item.id)
+                            ?.quantity}
+                      </TableCell>
+                    </TableRow>
+                  ))}
+              </TableBody>
+            </Table>
+            <Typography
+              id="modal-modal-description"
+              color="primary"
+              sx={{ mt: 2 }}>
+              Total: {subtotalvalue}
+            </Typography>
+            <Button
+              onClick={() => {
+                // handleClose(modalData, modalData?.unpaid - paid, false)
+                setOpen(false);
+              }}
+              variant="outlined"
+              // disabled={paid > modalData?.unpaid || isNaN(paid)}
+              sx={{ mr: 2, mt: 2 }}>
+              Cancel
+            </Button>
+            <Button
+              type="submit"
+              onClick={() => {
+                setOpen(false)
+                credit ? formik.submitForm() : formik2.submitForm()
+                // handleClose(modalData, 0, true);
+              }}
+              variant="contained"
+              // disabled={paid > modalData?.unpaid || isNaN(paid)}
+              sx={{ mr: 2, mt: 2 }}>
+              Sell
+            </Button>
+          </Box>
+        </Modal>
       </Box>
     </Card>
   );

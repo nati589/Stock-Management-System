@@ -37,7 +37,7 @@ function Credit() {
       console.log(reason);
     } else {
       if (covered || unpaid === 0) {
-        console.log(unpaid)
+        console.log(unpaid);
         try {
           const creditDoc = doc(db, "sales", data.id);
           await updateDoc(creditDoc, {
@@ -99,43 +99,49 @@ function Credit() {
       name: "Amount",
       options: {
         filter: false,
-      }
+      },
     },
     {
       name: "Unpaid",
       options: {
         filter: false,
-      }
+      },
     },
     {
       name: "Due Date",
       options: {
         filter: false,
-      }
+      },
     },
     {
       name: "ID",
       options: {
         display: false,
         filter: false,
-      }
-    }, 
+      },
+    },
+    {
+      name: "DAY",
+      options: {
+        display: false,
+        filter: true,
+      },
+    },
+    {
+      name: "MONTH",
+      options: {
+        display: false,
+        filter: true,
+      },
+    },
+    {
+      name: "YEAR",
+      options: {
+        display: false,
+        filter: true,
+      },
+    },
     "Status",
-    // {
-    //   label: "Products",
-    //   options: {
-    //     filter: false,
-    //     sort: false,
-    //     customBodyRender: (value, tableMeta, updateValue) => {
-    //       console.log(tableMeta.rowData[6])
-    //       const rowProducts = tableMeta.rowData[6]?.length
-    //       return (
-    //         <p>{rowProducts}</p>
-    //       );
-    //     },
-    //   },
-    //   name: "products",
-    // },
     {
       label: "ACTION",
       options: {
@@ -201,7 +207,9 @@ function Credit() {
                       </TableCell>
                       <TableCell align="right">{item.quantity}</TableCell>
                       <TableCell align="right">{item.price}</TableCell>
-                      <TableCell align="right">{item.price * item.quantity}</TableCell>
+                      <TableCell align="right">
+                        {item.price * item.quantity}
+                      </TableCell>
                     </TableRow>
                   ))}
                 </TableBody>
@@ -219,17 +227,28 @@ function Credit() {
         ...doc.data(),
         id: doc.id,
       }));
-      setCredit(filteredCredits.filter((credit) => credit?.creditinfo?.payment_covered === false));
+      setCredit(
+        filteredCredits.filter(
+          (credit) => credit?.creditinfo?.payment_covered === false
+        )
+      );
       setCreditList(
         filteredCredits
-          .filter((filteredCredit) => filteredCredit?.creditinfo?.payment_covered === false)
+          .filter(
+            (filteredCredit) =>
+              filteredCredit?.creditinfo?.payment_covered === false
+          )
           .map((filteredCredit) => {
+            let [month, day, year] = filteredCredit.date_sold.split("/");
             return [
               filteredCredit.creditinfo.name,
               filteredCredit.total,
               filteredCredit.creditinfo.unpaid,
               filteredCredit.creditinfo.duedate,
               filteredCredit.id,
+              day,
+              month,
+              year,
               filteredCredit.creditinfo?.payment_covered === true
                 ? "Paid"
                 : "Unpaid",
@@ -314,7 +333,9 @@ function Credit() {
               Amount Left: {modalData?.unpaid - paid}
             </Typography>
             <Button
-              onClick={() => handleClose(modalData, modalData?.unpaid - paid, false)}
+              onClick={() =>
+                handleClose(modalData, modalData?.unpaid - paid, false)
+              }
               variant="outlined"
               disabled={paid > modalData?.unpaid || isNaN(paid)}
               sx={{ mr: 2, mt: 2 }}>

@@ -45,6 +45,27 @@ const columns = [
       filter: false,
     },
   },
+  {
+    name: "DAY",
+    options: {
+      display: false,
+      filter: true,
+    },
+  },
+  {
+    name: "MONTH",
+    options: {
+      display: false,
+      filter: true,
+    },
+  },
+  {
+    name: "YEAR",
+    options: {
+      display: false,
+      filter: true,
+    },
+  },
   "Salesperson",
   "Status",
 ];
@@ -89,7 +110,9 @@ function CreditReport() {
                       </TableCell>
                       <TableCell align="right">{item.quantity}</TableCell>
                       <TableCell align="right">{item.price}</TableCell>
-                      <TableCell align="right">{item.price * item.quantity}</TableCell>
+                      <TableCell align="right">
+                        {item.price * item.quantity}
+                      </TableCell>
                     </TableRow>
                   ))}
                 </TableBody>
@@ -113,12 +136,16 @@ function CreditReport() {
         filteredCredits
           .filter((credit) => credit.credit === true)
           .map((filteredCredit) => {
+            let [month, day, year] = filteredCredit.date_sold.split("/");
             return [
               filteredCredit.creditinfo.name,
               filteredCredit.date_sold,
               filteredCredit.creditinfo.duedate,
               filteredCredit.total,
               filteredCredit.id,
+              day,
+              month,
+              year,
               filteredCredit.seller,
               filteredCredit.creditinfo?.payment_covered === true
                 ? "Paid"
