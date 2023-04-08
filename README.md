@@ -11,6 +11,9 @@ Features:
 - User Account
 
   - Make sales
+    - Add to cart
+    - Remove from cart
+    - Calculate total
   - Register products
   - Filter products by category
   - Sell products to customers on credit
