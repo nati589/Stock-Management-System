@@ -166,29 +166,33 @@ function Stock() {
     },
   ];
   const getDetails = async () => {
-    const productData = await getDocs(productsRef);
-    const filteredProducts = productData.docs.map((doc) => ({
-      ...doc.data(),
-      id: doc.id,
-    }));
-    setProductList(
-      filteredProducts.map((product) => {
-        let [month, day, year] = product.date_added.split("/");
-        return [
-          product.name,
-          product.unit,
-          product.quantity,
-          product.price_bought,
-          product.id,
-          day,
-          month,
-          year,
-          product.date_added,
-          product.category,
-          product.added_by,
-        ];
-      })
-    );
+    try {
+      const productData = await getDocs(productsRef);
+      const filteredProducts = productData.docs.map((doc) => ({
+        ...doc.data(),
+        id: doc.id,
+      }));
+      setProductList(
+        filteredProducts.map((product) => {
+          let [month, day, year] = product.date_added.split("/");
+          return [
+            product.name,
+            product.unit,
+            product.quantity,
+            product.price_bought,
+            product.id,
+            day,
+            month,
+            year,
+            product.date_added,
+            product.category,
+            product.added_by,
+          ];
+        })
+      );
+    } catch (error) {
+      console.error(error);
+    }
   };
 
   useEffect(() => {
