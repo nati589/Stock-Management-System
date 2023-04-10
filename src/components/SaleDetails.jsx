@@ -249,13 +249,13 @@ function SaleDetails({ cart, removeCart, handleSnackbarOpen, removeCartItem }) {
             <Grid item md={3}>
               Item
             </Grid>
-            <Grid item md={5}>
+            <Grid item md={3}>
               <Typography>Quantity</Typography>
             </Grid>
-            <Grid item md={2}>
+            <Grid item md={3}>
               Unit Price
             </Grid>
-            <Grid item md={2}>
+            <Grid item md={3}>
               Item Total
             </Grid>
           </Grid>

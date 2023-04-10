@@ -58,9 +58,9 @@ function CartItem({ cardData, handleSubtotal, removeItem, subtotal }) {
       </Grid>
       {!deleteItem && (
         <>
-          <Grid item md={5}>
+          <Grid item md={3} sx={{pr: 2}}>
             <Box sx={{ display: "flex", alignItems: "center" }}>
-              <IconButton
+              {/* <IconButton
                 color="primary"
                 onClick={() => {
                   setQuantity(Number(quantity) - 1);
@@ -71,7 +71,7 @@ function CartItem({ cardData, handleSubtotal, removeItem, subtotal }) {
                 }}
                 disabled={quantity < 1 ? true : false}>
                 <RemoveOutlinedIcon fontSize="small" />
-              </IconButton>
+              </IconButton> */}
               <TextField
                 error={quantityError}
                 id="quantity"
@@ -107,7 +107,7 @@ function CartItem({ cardData, handleSubtotal, removeItem, subtotal }) {
                 value={quantity === 0 ? "" : quantity}
                 inputProps={{ inputMode: "numeric", pattern: "[0-9]*" }}
               />
-              <IconButton
+              {/* <IconButton
                 color="primary"
                 onClick={() => {
                   setQuantity(Number(quantity) + 1);
@@ -118,10 +118,10 @@ function CartItem({ cardData, handleSubtotal, removeItem, subtotal }) {
                 }}
                 disabled={quantity >= cardData.quantity ? true : false}>
                 <AddOutlinedIcon fontSize="small" />
-              </IconButton>
+              </IconButton> */}
             </Box>
           </Grid>
-          <Grid item md={2}>
+          <Grid item md={3}>
             <TextField
               error={priceError}
               // sx={{ mr: 1}}
@@ -150,7 +150,7 @@ function CartItem({ cardData, handleSubtotal, removeItem, subtotal }) {
               // inputProps={{ inputMode: "numeric", pattern: "[0-9]*" }}
             />
           </Grid>
-          <Grid item md={2} sx={{ display: "flex", alignItems: "center" }}>
+          <Grid item md={3} sx={{ display: "flex", alignItems: "center" }}>
             <Typography align="right" sx={{ ml: 2 }} fontSize="small">
               {quantity && price ? (quantity * price).toFixed(2) : 0}
             </Typography>
