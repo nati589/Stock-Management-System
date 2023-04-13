@@ -44,24 +44,12 @@ function Copyright(props) {
 }
 
 function Login() {
-  const [userList, setUserList] = useState([]);
   const usersRef = collection(db, "users");
   const navigate = useNavigate();
   const [loggedIn, setLoggedIn] = useState(false);
   const [openSnackbar, setOpenSnackbar] = useState(false);
 
-  const users = async () => {
-    try {
-      const userData = await getDocs(usersRef);
-      const filteredUsers = userData.docs.map((doc) => ({
-        ...doc.data(),
-        id: doc.id,
-      }));
-      setUserList(filteredUsers);
-    } catch (error) {
-      console.error(error);
-    }
-  };
+  const users = async () => {};
   const formik = useFormik({
     initialValues: {
       username: "",
@@ -73,27 +61,37 @@ function Login() {
         .required("Required field")
         .min(6, "Must be at least 6 characters"),
     }),
-    onSubmit: (values) => {
-      let currentUser = userList?.find(
-        (user) => user?.username === values?.username
-      );
-      if (
-        currentUser?.password === values?.password &&
-        currentUser?.admin === true
-      ) {
-        localStorage.setItem("loggedInUser", true);
-        localStorage.setItem("loggedInStatus", true);
-        setLoggedIn(true);
-      } else if (
-        currentUser?.password === values?.password &&
-        currentUser?.admin === false
-      ) {
-        localStorage.setItem("loggedInUser", true);
-        localStorage.setItem("loggedInStatus", false);
-        localStorage.setItem("fullName", currentUser?.fullname)
-        setLoggedIn(true);
-      } else {
-        setOpenSnackbar(true)
+    onSubmit: async (values) => {
+      try {
+        const userData = await getDocs(usersRef);
+        const userList = userData.docs.map((doc) => ({
+          ...doc.data(),
+          id: doc.id,
+        }));
+
+        let currentUser = userList?.find(
+          (user) => user?.username === values?.username
+        );
+        if (
+          currentUser?.password === values?.password &&
+          currentUser?.admin === true
+        ) {
+          localStorage.setItem("loggedInUser", true);
+          localStorage.setItem("loggedInStatus", true);
+          setLoggedIn(true);
+        } else if (
+          currentUser?.password === values?.password &&
+          currentUser?.admin === false
+        ) {
+          localStorage.setItem("loggedInUser", true);
+          localStorage.setItem("loggedInStatus", false);
+          localStorage.setItem("fullName", currentUser?.fullname);
+          setLoggedIn(true);
+        } else {
+          setOpenSnackbar(true);
+        }
+      } catch (error) {
+        console.error(error);
       }
     },
   });
@@ -106,7 +104,6 @@ function Login() {
     } else if (getUser === "true" && getStatus === "true") {
       navigate("/admin");
     }
-    users();
   }, [loggedIn]);
 
   return (
@@ -187,16 +184,16 @@ function Login() {
         </Box>
         <Copyright sx={{ mt: 8, mb: 4 }} />
         <Snackbar
-        open={openSnackbar}
-        autoHideDuration={6000}
-        onClose={() => setOpenSnackbar(false)}>
-        <Alert
-          severity="error"
-          onClose={() => setOpenSnackbar(false)}
-          sx={{ width: "100%" }}>
-          Login Failed
-        </Alert>
-      </Snackbar>
+          open={openSnackbar}
+          autoHideDuration={6000}
+          onClose={() => setOpenSnackbar(false)}>
+          <Alert
+            severity="error"
+            onClose={() => setOpenSnackbar(false)}
+            sx={{ width: "100%" }}>
+            Login Failed
+          </Alert>
+        </Snackbar>
       </Container>
     </>
   );
