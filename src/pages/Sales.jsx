@@ -121,9 +121,9 @@ function Sales() {
             display: "flex",
             justifyContent: "space-between",
             alignItems: "center",
-            mb: 3,
-            pl: 0,
-            pr: 0,
+            mb: 2,
+            pl: 2,
+            pr: 2,
           }}>
           <Categories data={categories} handleSort={handleSort} />
           <Search>
@@ -158,6 +158,7 @@ function Sales() {
           removeCart={removeCart}
           handleSnackbarOpen={setOpenSnackbar}
           removeCartItem={removeCartItem}
+          refreshProducts={getProducts}
         />
       </Grid>
       <Snackbar

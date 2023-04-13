@@ -31,6 +31,7 @@ function AddProduct() {
   const addedBy = localStorage.getItem("fullName");
   const [unit, setUnit] = useState("");
   const [quantity, setQuantity] = useState("");
+  const [restock, setRestock] = useState("");
   const priceBought = 0;
 
   const [productList, setProductList] = useState([]);
@@ -78,6 +79,7 @@ function AddProduct() {
           quantity: Number(quantity) + Number(productId.quantity),
           date_added: myDate,
           added_by: addedBy,
+          restock: restock == "" ? productId?.restock : Number(restock)
         }).then(() => setOpenSnackbar(true));
         getDetails();
       } catch (error) {
@@ -97,6 +99,7 @@ function AddProduct() {
           added_by: addedBy,
           quantity: Number(quantity),
           unit,
+          restock: Number(restock),
         }).then(() => setOpenSnackbar(true));
         if (categoryList.find((item) => item.name === category) === undefined) {
           await addDoc(categoryRef, { name: category });
@@ -111,6 +114,7 @@ function AddProduct() {
     setQuantity("");
     setNewProduct(false);
     setNewCategory(false);
+    setRestock("");
   };
   return (
     <Grid container sx={{ pl: 2, pr: 2 }}>
@@ -235,6 +239,17 @@ function AddProduct() {
                 </Select>
               </FormControl>
             )}
+            <TextField
+                margin="normal"
+                fullWidth
+                type="number"
+                id="restock"
+                label="Restock Limit"
+                sx={{ mr: 2 }}
+                value={restock}
+                onChange={(event) => setRestock(event.target.value)}
+                name="restock"
+              />
             <Box sx={{ display: "flex", justifyContent: "flex-end", mt: 2 }}>
               <Button variant="contained" type="submit">
                 Save

@@ -5,7 +5,7 @@ function Categories({ data, handleSort }) {
   const [category, setCategory] = useState("All");
 
   return (
-    <FormControl sx={{ minWidth: 250 }}>
+    <FormControl sx={{ minWidth: 150 }}>
       <InputLabel id="categories">Categories</InputLabel>
       <Select
         labelId="categories"

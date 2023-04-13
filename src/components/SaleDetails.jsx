@@ -38,7 +38,13 @@ import {
   writeBatch,
 } from "firebase/firestore";
 
-function SaleDetails({ cart, removeCart, handleSnackbarOpen, removeCartItem }) {
+function SaleDetails({
+  cart,
+  removeCart,
+  handleSnackbarOpen,
+  removeCartItem,
+  refreshProducts,
+}) {
   const [subtotal, setSubtotal] = useState([]);
   const [subtotalvalue, setSubtotalvalue] = useState(0);
   const [credit, setCredit] = useState(false);
@@ -102,6 +108,7 @@ function SaleDetails({ cart, removeCart, handleSnackbarOpen, removeCartItem }) {
           await batch.commit().then(() => {
             handleSnackbarOpen(true);
           });
+          refreshProducts();
         } catch (error) {
           console.error(error);
         }
@@ -152,6 +159,7 @@ function SaleDetails({ cart, removeCart, handleSnackbarOpen, removeCartItem }) {
             buyer: values.buyer,
             date_sold: myDate,
           }).then(() => handleSnackbarOpen(true));
+          refreshProducts();
         } catch (error) {
           console.error(error);
         }
@@ -452,31 +460,31 @@ function SaleDetails({ cart, removeCart, handleSnackbarOpen, removeCartItem }) {
                 </TableRow>
               </TableHead>
               <TableBody>
-                  {cart?.map((item, index) => (
-                    <TableRow key={index}>
-                      <TableCell component="th" scope="row">
-                        {item.name}
-                      </TableCell>
-                      <TableCell align="right">
-                        {
-                          subtotal.find((product) => product.id === item.id)
-                            ?.quantity
-                        }
-                      </TableCell>
-                      <TableCell align="right">
-                        {
-                          subtotal.find((product) => product.id === item.id)
-                            ?.price
-                        }
-                      </TableCell>
-                      <TableCell align="right">
-                        {subtotal.find((product) => product.id === item.id)
-                          ?.price *
-                          subtotal.find((product) => product.id === item.id)
-                            ?.quantity}
-                      </TableCell>
-                    </TableRow>
-                  ))}
+                {cart?.map((item, index) => (
+                  <TableRow key={index}>
+                    <TableCell component="th" scope="row">
+                      {item.name}
+                    </TableCell>
+                    <TableCell align="right">
+                      {
+                        subtotal.find((product) => product.id === item.id)
+                          ?.quantity
+                      }
+                    </TableCell>
+                    <TableCell align="right">
+                      {
+                        subtotal.find((product) => product.id === item.id)
+                          ?.price
+                      }
+                    </TableCell>
+                    <TableCell align="right">
+                      {subtotal.find((product) => product.id === item.id)
+                        ?.price *
+                        subtotal.find((product) => product.id === item.id)
+                          ?.quantity}
+                    </TableCell>
+                  </TableRow>
+                ))}
               </TableBody>
             </Table>
             <Typography
@@ -498,8 +506,8 @@ function SaleDetails({ cart, removeCart, handleSnackbarOpen, removeCartItem }) {
             <Button
               type="submit"
               onClick={() => {
-                setOpen(false)
-                credit ? formik.submitForm() : formik2.submitForm()
+                setOpen(false);
+                credit ? formik.submitForm() : formik2.submitForm();
                 // handleClose(modalData, 0, true);
               }}
               variant="contained"

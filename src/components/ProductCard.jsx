@@ -22,7 +22,14 @@ function ProductCard({ data, addToCart }) {
   }
   return (
     <Box>
-      <MyCard variant="outlined" sx={{ borderRadius: 2, borderWidth: 3 }}>
+      <MyCard
+        variant="outlined"
+        sx={{
+          borderRadius: 2,
+          borderWidth: 0,
+          borderTop: 2,
+          borderColor: Number(data?.restock) < Number(data.quantity) ? "#ccc" : "#f44",
+        }}>
         <Box sx={{ display: "flex", justifyContent: "flex-end" }}>
           <IconButton onClick={toggleInfo} color="primary">
             {!info && <InfoOutlinedIcon />}
@@ -31,7 +38,7 @@ function ProductCard({ data, addToCart }) {
         </Box>
         <CardContent sx={{ minHeight: 120 }}>
           <Box>
-            <Typography align="center" variant="h6" color="primary" noWrap>
+            <Typography align="center" variant="h6" color={Number(data?.restock) < Number(data.quantity)? "primary" : "error"} noWrap>
               {data.name}
             </Typography>
             <Typography align="center" fontSize={12} sx={{ mt: 1 }}>
