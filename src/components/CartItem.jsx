@@ -77,7 +77,7 @@ function CartItem({ cardData, handleSubtotal, removeItem, subtotal }) {
                 id="quantity"
                 size="small"
                 onChange={(event) => {
-                  if (event.target.value < 1 || isNaN(event.target.value)) {
+                  if (event.target.value < 0 || isNaN(event.target.value)) {
                     // setQuantityError(true);
                     setQuantity(0);
                     handleSubtotal(cardData.id, {
@@ -104,8 +104,9 @@ function CartItem({ cardData, handleSubtotal, removeItem, subtotal }) {
                 }}
                 label=""
                 variant="outlined"
+                type='number'
                 value={quantity === 0 ? "" : quantity}
-                inputProps={{ inputMode: "numeric", pattern: "[0-9]*" }}
+                // inputProps={{ inputMode: "numeric", pattern: "[0-9]*" }}
               />
               {/* <IconButton
                 color="primary"
